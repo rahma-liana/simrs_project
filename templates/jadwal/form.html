@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Tambah Jadwal Praktik' if action == 'tambah' else 'Edit Jadwal Praktik' }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('jadwal.index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar Jadwal
+  </a>
+  <h2 class="h4 fw-bold text-slate-900 mb-1">{{ 'Tambah Jadwal Dokter' if action == 'tambah' else 'Perbarui Jadwal Praktik' }}</h2>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-4">
+    <form method="POST">
+      <div class="row g-3">
+        <!-- Dokter -->
+        <div class="col-md-6">
+          <label for="dokter_id" class="form-label">Pilih Dokter <span class="text-danger">*</span></label>
+          <select class="form-select" id="dokter_id" name="dokter_id" required>
+            <option value="">-- Pilih Dokter --</option>
+            {% for d in dokter_list %}
+              <option value="{{ d.id }}" {% if (jadwal and jadwal.dokter_id == d.id) %}selected{% endif %}>
+                {{ d.nama_dokter }} - {{ d.nama_poli }} ({{ d.spesialisasi }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Hari -->
+        <div class="col-md-6">
+          <label for="hari" class="form-label">Hari Praktik <span class="text-danger">*</span></label>
+          <select class="form-select" id="hari" name="hari" required>
+            <option value="">-- Pilih Hari --</option>
+            {% for h in hari_list %}
+              <option value="{{ h }}" {% if (jadwal and jadwal.hari == h) %}selected{% endif %}>{{ h }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Jam Mulai -->
+        <div class="col-md-4">
+          <label for="jam_mulai" class="form-label">Jam Mulai <span class="text-danger">*</span></label>
+          <input type="time" class="form-control" id="jam_mulai" name="jam_mulai" required
+                 value="{{ jadwal.jam_mulai if jadwal else '08:00' }}">
+        </div>
+
+        <!-- Jam Selesai -->
+        <div class="col-md-4">
+          <label for="jam_selesai" class="form-label">Jam Selesai <span class="text-danger">*</span></label>
+          <input type="time" class="form-control" id="jam_selesai" name="jam_selesai" required
+                 value="{{ jadwal.jam_selesai if jadwal else '12:00' }}">
+        </div>
+
+        <!-- Kuota Pasien -->
+        <div class="col-md-2">
+          <label for="kuota_pasien" class="form-label">Kuota Pasien</label>
+          <input type="number" class="form-control" id="kuota_pasien" name="kuota_pasien" min="1" max="100"
+                 value="{{ jadwal.kuota_pasien if jadwal else 30 }}">
+        </div>
+
+        <!-- Status -->
+        <div class="col-md-2">
+          <label for="status" class="form-label">Status</label>
+          <select class="form-select" id="status" name="status">
+            <option value="Aktif" {% if not jadwal or jadwal.status == 'Aktif' %}selected{% endif %}>Aktif</option>
+            <option value="Libur" {% if jadwal and jadwal.status == 'Libur' %}selected{% endif %}>Libur</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+        <a href="{{ url_for('jadwal.index') }}" class="btn btn-light px-4">Batal</a>
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="bi bi-save me-1"></i>Simpan Jadwal
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

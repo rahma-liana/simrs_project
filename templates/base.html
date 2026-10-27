@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} - SIMRS {{ hosp.nama_rs }}</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5.3.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- Custom Healthcare CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div id="app-container">
+  
+  <!-- SIDEBAR NAVIGASI (KIRI) -->
+  <aside id="sidebar">
+    <!-- Header Sidebar -->
+    <div class="sidebar-header">
+      <a href="{{ url_for('dashboard.index') }}" class="brand-logo">
+        <div class="brand-icon">
+          <i class="bi bi-hospital"></i>
+        </div>
+        <div class="brand-text">
+          <h1>SIMRS MEDIKA</h1>
+          <span>Pelayanan Sehat</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Body Menu Sidebar -->
+    <div class="sidebar-body">
+      <div class="sidebar-nav-label">Utama</div>
+      <a href="{{ url_for('dashboard.index') }}" class="nav-item-link {% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <div class="sidebar-nav-label">Master Data & Pelayanan</div>
+      <a href="{{ url_for('pasien.index') }}" class="nav-item-link {% if 'pasien.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-people-fill"></i>
+        <span>Data Pasien</span>
+      </a>
+      <a href="{{ url_for('dokter.index') }}" class="nav-item-link {% if 'dokter.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-person-badge-fill"></i>
+        <span>Data Dokter</span>
+      </a>
+      <a href="{{ url_for('poli.index') }}" class="nav-item-link {% if 'poli.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-building-fill-check"></i>
+        <span>Data Poli</span>
+      </a>
+      <a href="{{ url_for('jadwal.index') }}" class="nav-item-link {% if 'jadwal.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-calendar3-week-fill"></i>
+        <span>Jadwal Dokter</span>
+      </a>
+      <a href="{{ url_for('tindakan.index') }}" class="nav-item-link {% if 'tindakan.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-heart-pulse-fill"></i>
+        <span>Tindakan Medis</span>
+      </a>
+
+      <div class="sidebar-nav-label">Alur Pasien & Klinis</div>
+      <a href="{{ url_for('pendaftaran.index') }}" class="nav-item-link {% if 'pendaftaran.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-ticket-perforated-fill"></i>
+        <span>Pendaftaran & Antrean</span>
+        {% if total_antrean_menunggu > 0 %}
+          <span class="badge bg-warning text-dark nav-badge">{{ total_antrean_menunggu }}</span>
+        {% endif %}
+      </a>
+      <a href="{{ url_for('rekam_medis.index') }}" class="nav-item-link {% if 'rekam_medis.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-clipboard2-pulse-fill"></i>
+        <span>Rekam Medis</span>
+      </a>
+
+      <div class="sidebar-nav-label">Farmasi & Kasir</div>
+      <a href="{{ url_for('farmasi.obat_index') }}" class="nav-item-link {% if 'farmasi.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-capsule-pill"></i>
+        <span>Farmasi & Obat</span>
+        {% if total_obat_menipis > 0 %}
+          <span class="badge bg-danger nav-badge" title="Stok obat menipis">{{ total_obat_menipis }}</span>
+        {% endif %}
+      </a>
+      <a href="{{ url_for('kasir.index') }}" class="nav-item-link {% if 'kasir.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-cash-coin"></i>
+        <span>Kasir & Pembayaran</span>
+      </a>
+
+      <div class="sidebar-nav-label">Laporan & Pengaturan</div>
+      <a href="{{ url_for('laporan.index') }}" class="nav-item-link {% if 'laporan.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-file-earmark-bar-graph-fill"></i>
+        <span>Laporan RS</span>
+      </a>
+      <a href="{{ url_for('pengaturan.index') }}" class="nav-item-link {% if 'pengaturan.' in request.endpoint %}active{% endif %}">
+        <i class="bi bi-gear-fill"></i>
+        <span>Pengaturan</span>
+      </a>
+    </div>
+
+    <!-- Footer Sidebar -->
+    <div class="sidebar-footer">
+      <a href="{{ url_for('auth.logout') }}" class="nav-item-link text-danger">
+        <i class="bi bi-box-arrow-right text-danger"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER (KANAN) -->
+  <div id="main-wrapper">
+    
+    <!-- TOP HEADER -->
+    <header id="top-header">
+      <div class="header-left">
+        <button type="button" class="btn btn-sm btn-light d-lg-none" id="sidebar-toggle">
+          <i class="bi bi-list fs-5"></i>
+        </button>
+        <div class="hospital-title">
+          <span>{{ hosp.nama_rs }}</span>
+          <span class="hospital-badge"><i class="bi bi-patch-check-fill me-1"></i>Terakreditasi</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Quick Alert Badges -->
+        {% if total_obat_menipis > 0 %}
+          <a href="{{ url_for('farmasi.obat_index', filter_stok='menipis') }}" class="btn btn-sm btn-outline-danger d-none d-sm-inline-flex align-items-center gap-1" title="Obat Stok Menipis">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>{{ total_obat_menipis }} Obat Menipis</span>
+          </a>
+        {% endif %}
+
+        {% if total_antrean_menunggu > 0 %}
+          <a href="{{ url_for('pendaftaran.index', status='Menunggu') }}" class="btn btn-sm btn-outline-warning text-dark d-none d-sm-inline-flex align-items-center gap-1" title="Antrean Menunggu">
+            <i class="bi bi-hourglass-split"></i>
+            <span>{{ total_antrean_menunggu }} Menunggu</span>
+          </a>
+        {% endif %}
+
+        <!-- Profile Chip -->
+        <a href="{{ url_for('pengaturan.index') }}" class="user-profile-btn" title="Kelola Akun Admin">
+          <div class="user-avatar">
+            {{ admin_user.nama_lengkap[0] if admin_user.nama_lengkap else 'A' }}
+          </div>
+          <div class="d-none d-md-block text-start">
+            <div class="fw-bold leading-tight">{{ admin_user.nama_lengkap }}</div>
+            <div class="text-muted" style="font-size: 0.7rem;">Role: {{ admin_user.role }}</div>
+          </div>
+          <i class="bi bi-chevron-right text-muted d-none d-md-block" style="font-size: 0.75rem;"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY -->
+    <main id="content-body">
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show card-custom mb-4" role="alert">
+              <div class="d-flex align-items-center gap-2">
+                {% if category == 'success' %}
+                  <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                {% elif category == 'danger' %}
+                  <i class="bi bi-exclamation-octagon-fill text-danger fs-5"></i>
+                {% elif category == 'warning' %}
+                  <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+                {% else %}
+                  <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                {% endif %}
+                <div>{{ message }}</div>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Main Page Content Block -->
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer Simple -->
+    <footer class="py-3 px-4 text-center text-muted border-top bg-white no-print" style="font-size: 0.8rem;">
+      &copy; 2026 {{ hosp.nama_rs }}. Sistem Informasi Rumah Sakit Berbasis Web (SIMRS).
+    </footer>
+
+  </div>
+</div>
+
+<!-- Modal Universal Konfirmasi Hapus Data -->
+<div class="modal fade" id="modalKonfirmasiHapus" tabindex="-1" aria-labelledby="modalKonfirmasiHapusLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content card-custom">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title text-danger fw-bold" id="modalKonfirmasiHapusLabel">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>Konfirmasi Hapus
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-3">
+        <p class="text-secondary mb-1">Apakah Anda yakin ingin menghapus data berikut dari sistem?</p>
+        <div class="p-3 bg-light rounded text-primary fw-bold" id="hapusItemNama">-</div>
+        <p class="text-danger small mt-2 mb-0"><i class="bi bi-info-circle me-1"></i>Data yang dihapus tidak dapat dipulihkan.</p>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-danger" id="btnSubmitHapus">
+          <i class="bi bi-trash-fill me-1"></i>Ya, Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

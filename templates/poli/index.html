@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Data Poliklinik{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Manajemen Poliklinik (Poli)</h2>
+    <p class="text-muted small mb-0">Kelola unit poliklinik rawat jalan, lokasi ruangan, dan status operasional.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('poli.tambah') }}" class="btn btn-primary">
+      <i class="bi bi-plus-circle-fill me-1"></i>Tambah Poli Baru
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>Kode Poli</th>
+            <th>Nama Poliklinik</th>
+            <th>Lokasi Gedung / Ruangan</th>
+            <th>Total Dokter</th>
+            <th>Keterangan Pelayanan</th>
+            <th>Status</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if poli_list %}
+            {% for p in poli_list %}
+              <tr>
+                <td><span class="badge bg-primary text-white font-monospace">{{ p.kode_poli }}</span></td>
+                <td><strong class="text-slate-800">{{ p.nama_poli }}</strong></td>
+                <td><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ p.lokasi }}</td>
+                <td><span class="badge bg-info-subtle text-info">{{ p.total_dokter }} Dokter</span></td>
+                <td><small class="text-muted">{{ p.keterangan or '-' }}</small></td>
+                <td>
+                  {% if p.status_aktif == 'Aktif' %}
+                    <span class="badge bg-success-subtle text-success">Aktif</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Nonaktif</span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <a href="{{ url_for('poli.edit', id=p.id) }}" class="btn btn-light" title="Edit Poli">
+                      <i class="bi bi-pencil-fill text-warning"></i>
+                    </a>
+                    <button type="button" class="btn btn-light" title="Hapus Poli"
+                            onclick="konfirmasiHapus('form-hapus-poli-{{ p.id }}', '{{ p.nama_poli }}')">
+                      <i class="bi bi-trash-fill text-danger"></i>
+                    </button>
+                  </div>
+                  <form id="form-hapus-poli-{{ p.id }}" method="POST" action="{{ url_for('poli.hapus', id=p.id) }}" style="display:none;"></form>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center py-4 text-muted">Belum ada poliklinik terdaftar.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

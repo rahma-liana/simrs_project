@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Laporan Stok Obat Farmasi{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <a href="{{ url_for('laporan.index') }}" class="btn btn-sm btn-light mb-2">
+      <i class="bi bi-arrow-left me-1"></i>Kembali ke Pusat Laporan
+    </a>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Laporan Stok Persediaan Obat</h2>
+    <p class="text-muted small mb-0">Valuasi stok fisik, batas minimum pengadaan, dan pemantauan masa kedaluwarsa.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('laporan.farmasi', tipe='stok', export='print', kategori=selected_kategori) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-printer-fill me-1"></i>Cetak Laporan
+    </a>
+    <a href="{{ url_for('laporan.farmasi', tipe='stok', export='excel', kategori=selected_kategori) }}" class="btn btn-success btn-sm">
+      <i class="bi bi-file-earmark-excel-fill me-1"></i>Ekspor ke Excel
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('laporan.farmasi') }}" class="row g-2 w-100 align-items-center m-0">
+      <input type="hidden" name="tipe" value="stok">
+      <div class="col-md-4 p-0 pe-md-2">
+        <select class="form-select" name="kategori">
+          <option value="">-- Semua Kategori Obat --</option>
+          {% for k in kategori_list %}
+            <option value="{{ k.kategori }}" {% if selected_kategori == k.kategori %}selected{% endif %}>{{ k.kategori }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto p-0">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Kode</th>
+            <th>Nama Obat</th>
+            <th>Kategori</th>
+            <th>Satuan</th>
+            <th>Harga Beli</th>
+            <th>Harga Jual</th>
+            <th>Stok Saat Ini</th>
+            <th>Stok Min</th>
+            <th>Kedaluwarsa</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if data %}
+            {% for r in data %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td><small class="font-monospace text-muted">{{ r.kode_obat }}</small></td>
+                <td><strong>{{ r.nama_obat }}</strong></td>
+                <td><span class="badge bg-light text-dark border">{{ r.kategori }}</span></td>
+                <td>{{ r.satuan }}</td>
+                <td>{{ r.harga_beli | rupiah }}</td>
+                <td><strong class="text-primary">{{ r.harga_jual | rupiah }}</strong></td>
+                <td>
+                  <strong class="{% if r.stok_saat_ini <= r.stok_minimum %}text-danger{% endif %}">
+                    {{ r.stok_saat_ini }}
+                  </strong>
+                </td>
+                <td>{{ r.stok_minimum }}</td>
+                <td><small class="font-monospace">{{ r.tanggal_kadaluwarsa }}</small></td>
+                <td>
+                  {% if r.stok_saat_ini <= r.stok_minimum %}
+                    <span class="badge bg-danger">MENIPIS</span>
+                  {% else %}
+                    <span class="badge bg-success">Aman</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr><td colspan="11" class="text-center py-4 text-muted">Belum ada data obat.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

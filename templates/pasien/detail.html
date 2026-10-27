@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Detail Pasien - {{ pasien.nama_lengkap }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('pasien.index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar Pasien
+  </a>
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+      <h2 class="h4 fw-bold text-slate-900 mb-1">{{ pasien.nama_lengkap }}</h2>
+      <p class="text-muted small mb-0">No. Rekam Medis: <strong class="text-primary">{{ pasien.no_rm }}</strong> &bull; NIK: {{ pasien.nik }}</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('pendaftaran.tambah', pasien_id=pasien.id) }}" class="btn btn-success btn-sm">
+        <i class="bi bi-ticket-perforated-fill me-1"></i>Daftarkan Kunjungan
+      </a>
+      <a href="{{ url_for('pasien.edit', id=pasien.id) }}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-pencil-fill me-1"></i>Edit Biodata
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Info Demografis Pasien -->
+  <div class="col-lg-4">
+    <div class="card-custom h-100">
+      <div class="card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-person-lines-fill text-primary"></i>
+          <span>Biodata Pasien</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <span class="text-muted small d-block">Jenis Kelamin:</span>
+          <strong>{{ 'Laki-laki' if pasien.jenis_kelamin == 'L' else 'Perempuan' }}</strong>
+        </div>
+        <div class="mb-3">
+          <span class="text-muted small d-block">Tempat, Tanggal Lahir:</span>
+          <strong>{{ pasien.tempat_lahir }}, {{ pasien.tanggal_lahir | tanggal_indo }}</strong>
+        </div>
+        <div class="mb-3">
+          <span class="text-muted small d-block">Golongan Darah:</span>
+          <span class="badge bg-light text-dark border">{{ pasien.golongan_darah }}</span>
+        </div>
+        <div class="mb-3">
+          <span class="text-muted small d-block">No. Telepon:</span>
+          <strong>{{ pasien.no_telepon }}</strong>
+        </div>
+        <div class="mb-3">
+          <span class="text-muted small d-block">Pekerjaan:</span>
+          <span>{{ pasien.pekerjaan or '-' }}</span>
+        </div>
+        <div class="mb-3">
+          <span class="text-muted small d-block">Alamat:</span>
+          <span>{{ pasien.alamat }}</span>
+        </div>
+        <div class="mb-3 p-2 bg-danger-subtle rounded border border-danger-subtle">
+          <span class="text-danger small d-block fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>Riwayat Alergi:</span>
+          <span class="text-danger">{{ pasien.riwayat_alergi or 'Tidak ada' }}</span>
+        </div>
+        <div class="pt-2 border-top">
+          <span class="text-muted small d-block">Kontak Darurat:</span>
+          <strong>{{ pasien.kontak_darurat_nama or '-' }}</strong>
+          <span class="text-muted small">({{ pasien.kontak_darurat_telp or '-' }})</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Riwayat Kunjungan & Rekam Medis -->
+  <div class="col-lg-8">
+    <!-- Riwayat Rekam Medis -->
+    <div class="card-custom mb-4">
+      <div class="card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-clipboard2-pulse-fill text-primary"></i>
+          <span>Riwayat Catatan Medis & Diagnosis ({{ rekam_medis | length }})</span>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        {% if rekam_medis %}
+          <div class="list-group list-group-flush">
+            {% for rm in rekam_medis %}
+              <div class="list-group-item p-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <h6 class="fw-bold text-slate-800 mb-0">
+                      {{ rm.diagnosis }}
+                      {% if rm.kode_icd10 %}
+                        <span class="badge bg-primary-subtle text-primary ms-1">{{ rm.kode_icd10 }}</span>
+                      {% endif %}
+                    </h6>
+                    <small class="text-muted">{{ rm.nama_poli }} &bull; Dokter: {{ rm.nama_dokter }}</small>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge bg-light text-dark border">{{ rm.tanggal_periksa | tanggal_indo }}</span>
+                    <a href="{{ url_for('rekam_medis.detail', id=rm.id) }}" class="btn btn-sm btn-outline-primary d-block mt-1 py-0 px-2">
+                      Lembar Rekam Medis &rarr;
+                    </a>
+                  </div>
+                </div>
+                <div class="small text-secondary mb-1">
+                  <strong>Keluhan:</strong> {{ rm.keluhan_utama }}
+                </div>
+                {% if rm.tekanan_darah or rm.suhu_tubuh %}
+                  <div class="small text-muted bg-light p-2 rounded">
+                    Tensi: <strong>{{ rm.tekanan_darah or '-' }}</strong> mmHg &bull;
+                    Suhu: <strong>{{ rm.suhu_tubuh or '-' }}</strong> &deg;C &bull;
+                    BB: <strong>{{ rm.berat_badan or '-' }}</strong> kg &bull;
+                    Nadi: <strong>{{ rm.denyut_nadi or '-' }}</strong> bpm
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-journal-x fs-3 d-block mb-1"></i>
+            Belum ada riwayat rekam medis tercatat untuk pasien ini.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Riwayat Kunjungan / Pendaftaran -->
+    <div class="card-custom">
+      <div class="card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-calendar-event text-success"></i>
+          <span>Riwayat Pendaftaran Kunjungan ({{ kunjungan | length }})</span>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table-custom mb-0">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>No. Antrean</th>
+                <th>Poliklinik</th>
+                <th>Dokter</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if kunjungan %}
+                {% for k in kunjungan %}
+                  <tr>
+                    <td>{{ k.tanggal_kunjungan | tanggal_indo }}</td>
+                    <td><strong class="text-primary">{{ k.no_antrean }}</strong></td>
+                    <td>{{ k.nama_poli }}</td>
+                    <td><small>{{ k.nama_dokter }}</small></td>
+                    <td>
+                      {% if k.status_antrean == 'Selesai' %}
+                        <span class="badge-status badge-selesai">Selesai</span>
+                      {% elif k.status_antrean == 'Menunggu' %}
+                        <span class="badge-status badge-menunggu">Menunggu</span>
+                      {% elif k.status_antrean == 'Dipanggil' %}
+                        <span class="badge-status badge-dipanggil">Dipanggil</span>
+                      {% elif k.status_antrean == 'Sedang Diperiksa' %}
+                        <span class="badge-status badge-diperiksa">Sedang Diperiksa</span>
+                      {% else %}
+                        <span class="badge-status badge-dibatalkan">{{ k.status_antrean }}</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="5" class="text-center py-4 text-muted">
+                    Belum ada riwayat kunjungan.
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

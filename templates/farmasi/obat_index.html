@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Master Data Obat & Stok Farmasi{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Manajemen Farmasi & Persediaan Obat</h2>
+    <p class="text-muted small mb-0">Kelola katalog obat, harga jual/beli, stok minimum, pemantauan tanggal kedaluwarsa, dan mutasi farmasi.</p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{{ url_for('farmasi.resep_index') }}" class="btn btn-outline-primary">
+      <i class="bi bi-receipt-cutoff me-1"></i>Daftar Resep Dokter
+    </a>
+    <a href="{{ url_for('farmasi.mutasi_index') }}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left-right me-1"></i>Mutasi Masuk/Keluar
+    </a>
+    <a href="{{ url_for('farmasi.obat_tambah') }}" class="btn btn-primary">
+      <i class="bi bi-plus-circle-fill me-1"></i>Tambah Obat Baru
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <!-- Search & Filter Toolbar -->
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('farmasi.obat_index') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-3 p-0 pe-md-2">
+        <select class="form-select" name="kategori">
+          <option value="">-- Semua Kategori --</option>
+          {% for k in kategori_list %}
+            <option value="{{ k.kategori }}" {% if selected_kategori == k.kategori %}selected{% endif %}>{{ k.kategori }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <select class="form-select" name="filter_stok">
+          <option value="">-- Status Stok --</option>
+          <option value="menipis" {% if filter_stok == 'menipis' %}selected{% endif %}>Hanya Stok Menipis (<= Min)</option>
+        </select>
+      </div>
+      <div class="col-md-4 p-0 pe-md-2">
+        <input type="text" class="form-control" name="search" value="{{ search }}" placeholder="Cari Nama atau Kode Obat...">
+      </div>
+      <div class="col-auto p-0">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+        {% if search or selected_kategori or filter_stok %}
+          <a href="{{ url_for('farmasi.obat_index') }}" class="btn btn-light ms-1">Reset</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>Kode</th>
+            <th>Nama Obat</th>
+            <th>Kategori</th>
+            <th>Satuan</th>
+            <th>Harga Jual</th>
+            <th>Stok Saat Ini</th>
+            <th>Kedaluwarsa</th>
+            <th>Status Stok</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if obat_list %}
+            {% for o in obat_list %}
+              <tr>
+                <td><small class="text-muted font-monospace">{{ o.kode_obat }}</small></td>
+                <td>
+                  <strong class="text-slate-800 d-block">{{ o.nama_obat }}</strong>
+                  <small class="text-muted">Beli: {{ o.harga_beli | rupiah }}</small>
+                </td>
+                <td><span class="badge bg-light text-dark border">{{ o.kategori }}</span></td>
+                <td>{{ o.satuan }}</td>
+                <td><strong class="text-primary">{{ o.harga_jual | rupiah }}</strong></td>
+                <td>
+                  <strong class="fs-6 {% if o.stok_saat_ini <= o.stok_minimum %}text-danger{% else %}text-slate-800{% endif %}">
+                    {{ o.stok_saat_ini }}
+                  </strong>
+                  <span class="text-muted small">/ min: {{ o.stok_minimum }}</span>
+                </td>
+                <td>
+                  <small class="font-monospace">{{ o.tanggal_kadaluwarsa }}</small>
+                </td>
+                <td>
+                  {% if o.stok_saat_ini <= o.stok_minimum %}
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                      <i class="bi bi-exclamation-triangle-fill me-1"></i>Menipis
+                    </span>
+                  {% else %}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                      <i class="bi bi-check-circle-fill me-1"></i>Aman
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <a href="{{ url_for('farmasi.mutasi_tambah') }}" class="btn btn-light text-success" title="Pasok / Mutasi Obat">
+                      <i class="bi bi-plus-slash-minus"></i>
+                    </a>
+                    <a href="{{ url_for('farmasi.obat_edit', id=o.id) }}" class="btn btn-light text-warning" title="Edit Data Obat">
+                      <i class="bi bi-pencil-fill"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="9" class="text-center py-4 text-muted">Belum ada data obat yang sesuai kriteria pencarian.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

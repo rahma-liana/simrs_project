@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Pusat Laporan Rumah Sakit{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <h2 class="h4 fw-bold text-slate-900 mb-1">Pusat Laporan & Pelaporan Rumah Sakit</h2>
+  <p class="text-muted small mb-0">Lihat, filter berdasarkan periode tanggal, cetak format A4/PDF, dan ekspor ke lembar kerja Excel (.xlsx).</p>
+</div>
+
+<div class="row g-4">
+  <!-- 1. Laporan Pasien -->
+  <div class="col-md-6 col-xl-4">
+    <div class="card-custom h-100 p-4 d-flex flex-column justify-content-between">
+      <div>
+        <div class="stat-icon blue mb-3">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <h5 class="fw-bold text-slate-900 mb-1">Laporan Data Pasien</h5>
+        <p class="text-muted small">Rekapitulasi database pasien terdaftar, data demografis, golongan darah, dan alamat.</p>
+      </div>
+      <div class="pt-3 border-top d-flex gap-2">
+        <a href="{{ url_for('laporan.pasien') }}" class="btn btn-outline-primary btn-sm flex-fill">Lihat Laporan</a>
+        <a href="{{ url_for('laporan.pasien', export='excel') }}" class="btn btn-light btn-sm text-success" title="Unduh Excel">
+          <i class="bi bi-file-earmark-excel-fill"></i> Excel
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Laporan Kunjungan -->
+  <div class="col-md-6 col-xl-4">
+    <div class="card-custom h-100 p-4 d-flex flex-column justify-content-between">
+      <div>
+        <div class="stat-icon green mb-3">
+          <i class="bi bi-calendar-check-fill"></i>
+        </div>
+        <h5 class="fw-bold text-slate-900 mb-1">Laporan Kunjungan & Antrean</h5>
+        <p class="text-muted small">Statistik kunjungan pasien per periode tanggal, distribusi poliklinik, dan performa pelayanan dokter.</p>
+      </div>
+      <div class="pt-3 border-top d-flex gap-2">
+        <a href="{{ url_for('laporan.kunjungan') }}" class="btn btn-outline-success btn-sm flex-fill">Lihat Laporan</a>
+        <a href="{{ url_for('laporan.kunjungan', export='excel') }}" class="btn btn-light btn-sm text-success" title="Unduh Excel">
+          <i class="bi bi-file-earmark-excel-fill"></i> Excel
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Laporan Persediaan Obat -->
+  <div class="col-md-6 col-xl-4">
+    <div class="card-custom h-100 p-4 d-flex flex-column justify-content-between">
+      <div>
+        <div class="stat-icon cyan mb-3">
+          <i class="bi bi-capsule-pill"></i>
+        </div>
+        <h5 class="fw-bold text-slate-900 mb-1">Laporan Stok Obat Farmasi</h5>
+        <p class="text-muted small">Monitoring stok sisa gudang farmasi, status stok menipis, valuasi aset obat, dan tanggal kedaluwarsa.</p>
+      </div>
+      <div class="pt-3 border-top d-flex gap-2">
+        <a href="{{ url_for('laporan.farmasi', tipe='stok') }}" class="btn btn-outline-info btn-sm flex-fill">Lihat Laporan</a>
+        <a href="{{ url_for('laporan.farmasi', tipe='stok', export='excel') }}" class="btn btn-light btn-sm text-success" title="Unduh Excel">
+          <i class="bi bi-file-earmark-excel-fill"></i> Excel
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Laporan Mutasi Obat -->
+  <div class="col-md-6 col-xl-4">
+    <div class="card-custom h-100 p-4 d-flex flex-column justify-content-between">
+      <div>
+        <div class="stat-icon amber mb-3">
+          <i class="bi bi-arrow-left-right"></i>
+        </div>
+        <h5 class="fw-bold text-slate-900 mb-1">Laporan Mutasi Obat (Masuk/Keluar)</h5>
+        <p class="text-muted small">Arsip pergerakan stok farmasi, log penerimaan dari distributor, dan pengeluaran obat resep.</p>
+      </div>
+      <div class="pt-3 border-top d-flex gap-2">
+        <a href="{{ url_for('laporan.farmasi', tipe='mutasi') }}" class="btn btn-outline-warning text-dark btn-sm flex-fill">Lihat Laporan</a>
+        <a href="{{ url_for('laporan.farmasi', tipe='mutasi', export='excel') }}" class="btn btn-light btn-sm text-success" title="Unduh Excel">
+          <i class="bi bi-file-earmark-excel-fill"></i> Excel
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Laporan Transaksi & Pendapatan -->
+  <div class="col-md-6 col-xl-4">
+    <div class="card-custom h-100 p-4 d-flex flex-column justify-content-between">
+      <div>
+        <div class="stat-icon green mb-3">
+          <i class="bi bi-cash-coin"></i>
+        </div>
+        <h5 class="fw-bold text-slate-900 mb-1">Laporan Pendapatan Keuangan</h5>
+        <p class="text-muted small">Rekapitulasi penerimaan kasir, rincian pembayaran menurut metode (Tunai, QRIS, Transfer), dan total omset.</p>
+      </div>
+      <div class="pt-3 border-top d-flex gap-2">
+        <a href="{{ url_for('laporan.pendapatan') }}" class="btn btn-outline-success btn-sm flex-fill">Lihat Laporan</a>
+        <a href="{{ url_for('laporan.pendapatan', export='excel') }}" class="btn btn-light btn-sm text-success" title="Unduh Excel">
+          <i class="bi bi-file-earmark-excel-fill"></i> Excel
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

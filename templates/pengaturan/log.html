@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Log Aktivitas Sistem{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <a href="{{ url_for('pengaturan.index') }}" class="btn btn-sm btn-light mb-2">
+      <i class="bi bi-arrow-left me-1"></i>Kembali ke Pengaturan
+    </a>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Audit Trail & Log Aktivitas Sistem</h2>
+    <p class="text-muted small mb-0">Catatan riwayat seluruh aktivitas penting yang dilakukan oleh Admin di dalam sistem SIMRS.</p>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('pengaturan.log_view') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-3 p-0 pe-md-2">
+        <select class="form-select" name="modul">
+          <option value="">-- Semua Modul --</option>
+          {% for m in modul_list %}
+            <option value="{{ m.modul }}" {% if selected_modul == m.modul %}selected{% endif %}>{{ m.modul }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <input type="date" class="form-control" name="tanggal" value="{{ selected_tgl }}">
+      </div>
+      <div class="col-auto p-0">
+        <button type="submit" class="btn btn-outline-primary">Filter Log</button>
+        {% if selected_modul or selected_tgl %}
+          <a href="{{ url_for('pengaturan.log_view') }}" class="btn btn-light ms-1">Reset</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>Waktu & Tanggal</th>
+            <th>Pengguna</th>
+            <th>Modul</th>
+            <th>Aktivitas</th>
+            <th>Detail Tindakan</th>
+            <th>Alamat IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if logs %}
+            {% for l in logs %}
+              <tr>
+                <td><small class="font-monospace text-muted">{{ l.created_at | datetime_indo }}</small></td>
+                <td><span class="badge bg-light text-primary border"><i class="bi bi-person me-1"></i>{{ l.username }}</span></td>
+                <td><span class="badge bg-secondary-subtle text-secondary">{{ l.modul }}</span></td>
+                <td><strong class="text-slate-800">{{ l.aktivitas }}</strong></td>
+                <td><small class="text-muted">{{ l.detail }}</small></td>
+                <td><small class="font-monospace text-muted">{{ l.ip_address or '127.0.0.1' }}</small></td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr><td colspan="6" class="text-center py-4 text-muted">Belum ada riwayat aktivitas tercatat.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Pendaftaran & Antrean Pasien{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Pendaftaran & Antrean Pasien</h2>
+    <p class="text-muted small mb-0">Kelola kunjungan rawat jalan, monitoring status antrean waktu nyata, dan pemanggilan pasien.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('pendaftaran.tambah') }}" class="btn btn-primary">
+      <i class="bi bi-ticket-perforated-fill me-1"></i>Daftarkan Kunjungan Baru
+    </a>
+  </div>
+</div>
+
+<!-- Ringkasan Status Antrean Hari Terpilih -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="p-3 bg-white border rounded-3 text-center">
+      <span class="text-muted small d-block mb-1">Total Kunjungan</span>
+      <strong class="fs-4 text-primary">{{ summary.total or 0 }}</strong>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="p-3 bg-white border rounded-3 text-center">
+      <span class="text-muted small d-block mb-1">Menunggu</span>
+      <strong class="fs-4 text-warning">{{ summary.menunggu or 0 }}</strong>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="p-3 bg-white border rounded-3 text-center">
+      <span class="text-muted small d-block mb-1">Sedang Diperiksa</span>
+      <strong class="fs-4 text-info">{{ summary.diperiksa or 0 }}</strong>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="p-3 bg-white border rounded-3 text-center">
+      <span class="text-muted small d-block mb-1">Selesai Layanan</span>
+      <strong class="fs-4 text-success">{{ summary.selesai or 0 }}</strong>
+    </div>
+  </div>
+</div>
+
+<div class="card-custom">
+  <!-- Filter & Search Toolbar -->
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('pendaftaran.index') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-3 p-0 pe-md-2">
+        <input type="date" class="form-control" name="tanggal" value="{{ selected_tanggal }}">
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <select class="form-select" name="poli_id">
+          <option value="">-- Semua Poliklinik --</option>
+          {% for p in poli_list %}
+            <option value="{{ p.id }}" {% if selected_poli|string == p.id|string %}selected{% endif %}>{{ p.nama_poli }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2 p-0 pe-md-2">
+        <select class="form-select" name="status">
+          <option value="">-- Semua Status --</option>
+          {% for st in ['Menunggu', 'Dipanggil', 'Sedang Diperiksa', 'Selesai', 'Dibatalkan'] %}
+            <option value="{{ st }}" {% if selected_status == st %}selected{% endif %}>{{ st }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <input type="text" class="form-control" name="search" value="{{ search }}" placeholder="Cari Nama/No. RM/No. Reg...">
+      </div>
+      <div class="col-auto p-0">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>No. Antrean</th>
+            <th>No. Reg</th>
+            <th>Pasien</th>
+            <th>Poliklinik & Dokter</th>
+            <th>Waktu Daftar</th>
+            <th>Keluhan Awal</th>
+            <th>Status Antrean</th>
+            <th class="text-end">Aksi Alur</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if pendaftaran_list %}
+            {% for reg in pendaftaran_list %}
+              <tr>
+                <td>
+                  <span class="fs-5 fw-bold text-primary">{{ reg.no_antrean }}</span>
+                  <a href="{{ url_for('pendaftaran.cetak_antrean', id=reg.id) }}" target="_blank" class="d-block small text-muted text-decoration-none" title="Cetak Karcis Antrean">
+                    <i class="bi bi-printer me-1"></i>Karcis
+                  </a>
+                </td>
+                <td><small class="text-muted font-monospace">{{ reg.no_pendaftaran }}</small></td>
+                <td>
+                  <a href="{{ url_for('pasien.detail', id=reg.pasien_id) }}" class="fw-semibold text-slate-800 text-decoration-none">
+                    {{ reg.nama_pasien }}
+                  </a>
+                  <span class="text-muted small d-block">No. RM: {{ reg.no_rm }}</span>
+                </td>
+                <td>
+                  <strong class="d-block text-primary small">{{ reg.nama_poli }}</strong>
+                  <small class="text-muted">{{ reg.nama_dokter }}</small>
+                </td>
+                <td><small>{{ reg.waktu_daftar }} WIB</small></td>
+                <td><small class="text-muted">{{ reg.keluhan_awal or '-' }}</small></td>
+                <td>
+                  <div class="dropdown">
+                    <button class="btn btn-sm dropdown-toggle py-1 px-2 border-0
+                      {% if reg.status_antrean == 'Menunggu' %}badge-menunggu
+                      {% elif reg.status_antrean == 'Dipanggil' %}badge-dipanggil
+                      {% elif reg.status_antrean == 'Sedang Diperiksa' %}badge-diperiksa
+                      {% elif reg.status_antrean == 'Selesai' %}badge-selesai
+                      {% else %}badge-dibatalkan{% endif %} badge-status" 
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{ reg.status_antrean }}
+                    </button>
+                    <ul class="dropdown-menu shadow-sm">
+                      <li><h6 class="dropdown-header">Ubah Status Antrean</h6></li>
+                      {% for st in ['Menunggu', 'Dipanggil', 'Sedang Diperiksa', 'Selesai', 'Dibatalkan'] %}
+                        <li>
+                          <form method="POST" action="{{ url_for('pendaftaran.update_status', id=reg.id) }}">
+                            <input type="hidden" name="status_antrean" value="{{ st }}">
+                            <button type="submit" class="dropdown-item {% if reg.status_antrean == st %}active{% endif %}">
+                              {{ st }}
+                            </button>
+                          </form>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <!-- Rekam Medis Action -->
+                    {% if reg.rekam_medis_id %}
+                      <a href="{{ url_for('rekam_medis.detail', id=reg.rekam_medis_id) }}" class="btn btn-light text-primary" title="Lihat Rekam Medis">
+                        <i class="bi bi-file-earmark-medical-fill me-1"></i>Medis
+                      </a>
+                    {% else %}
+                      <a href="{{ url_for('rekam_medis.periksa', pendaftaran_id=reg.id) }}" class="btn btn-primary" title="Lakukan Pemeriksaan">
+                        <i class="bi bi-stethoscope me-1"></i>Periksa
+                      </a>
+                    {% endif %}
+
+                    <!-- Tagihan Kasir Action -->
+                    {% if reg.tagihan_id %}
+                      <a href="{{ url_for('kasir.bayar', id=reg.tagihan_id) }}" class="btn btn-light {% if reg.status_pembayaran == 'Lunas' %}text-success{% else %}text-danger{% endif %}" title="Kasir & Pembayaran">
+                        <i class="bi bi-cash-stack me-1"></i>Kasir
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center py-4 text-muted">
+                <i class="bi bi-ticket-detailed fs-3 d-block mb-1"></i>
+                Tidak ada data antrean kunjungan untuk kriteria ini.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,596 @@
+{
+  "detail_resep": {
+    "1": {
+      "id": 1,
+      "resep_id": 1,
+      "obat_id": 1,
+      "jumlah": 10,
+      "harga_satuan": 1000.0,
+      "subtotal": 10000.0,
+      "aturan_pakai": "3 x 1 tablet sehari bila demam/nyeri"
+    },
+    "2": {
+      "id": 2,
+      "resep_id": 1,
+      "obat_id": 2,
+      "jumlah": 10,
+      "harga_satuan": 2500.0,
+      "subtotal": 25000.0,
+      "aturan_pakai": "3 x 1 kapsul sehari habiskan (antibiotik)"
+    },
+    "3": {
+      "id": 3,
+      "resep_id": 1,
+      "obat_id": 10,
+      "jumlah": 10,
+      "harga_satuan": 1200.0,
+      "subtotal": 12000.0,
+      "aturan_pakai": "1 x 1 tablet sehari pagi hari"
+    }
+  },
+  "dokter": {
+    "1": {
+      "id": 1,
+      "nip_sip": "SIP.01/DU/2021",
+      "nama_dokter": "dr. Andi Pratama, Sp.PD",
+      "poli_id": 4,
+      "spesialisasi": "Spesialis Penyakit Dalam",
+      "jenis_kelamin": "L",
+      "no_telepon": "081311112222",
+      "email": "dr.andi@rsmedika.co.id",
+      "biaya_konsultasi": 85000.0,
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "nip_sip": "SIP.02/DU/2020",
+      "nama_dokter": "dr. Siti Rahmawati, Sp.A",
+      "poli_id": 3,
+      "spesialisasi": "Spesialis Anak",
+      "jenis_kelamin": "P",
+      "no_telepon": "081322223333",
+      "email": "dr.siti@rsmedika.co.id",
+      "biaya_konsultasi": 75000.0,
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "nip_sip": "SIP.03/DU/2022",
+      "nama_dokter": "drg. Hendra Wijaya",
+      "poli_id": 2,
+      "spesialisasi": "Dokter Gigi Umum",
+      "jenis_kelamin": "L",
+      "no_telepon": "081333334444",
+      "email": "drg.hendra@rsmedika.co.id",
+      "biaya_konsultasi": 65000.0,
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    }
+  },
+  "jadwal_dokter": {
+    "1": {
+      "id": 1,
+      "dokter_id": 1,
+      "hari": "Senin",
+      "jam_mulai": "08:00:00",
+      "jam_selesai": "12:00:00",
+      "kuota_pasien": 25,
+      "status": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "dokter_id": 1,
+      "hari": "Rabu",
+      "jam_mulai": "08:00:00",
+      "jam_selesai": "12:00:00",
+      "kuota_pasien": 25,
+      "status": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "dokter_id": 1,
+      "hari": "Jumat",
+      "jam_mulai": "08:00:00",
+      "jam_selesai": "12:00:00",
+      "kuota_pasien": 25,
+      "status": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    }
+  },
+  "log_aktivitas": {
+    "1": {
+      "id": 1,
+      "user_id": 1,
+      "username": "admin",
+      "aktivitas": "Inisialisasi Sistem",
+      "modul": "Sistem",
+      "detail": "Instalasi dan migrasi database awal SIMRS berhasil",
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "user_id": 1,
+      "username": "admin",
+      "aktivitas": "Pendaftaran Pasien",
+      "modul": "Pendaftaran",
+      "detail": "Mendaftarkan kunjungan pasien Ahmad Fauzi ke Poli Umum",
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "user_id": 1,
+      "username": "admin",
+      "aktivitas": "Input Rekam Medis",
+      "modul": "Rekam Medis",
+      "detail": "Pencatatan pemeriksaan fisik dan diagnosis pasien Ahmad Fauzi",
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-20 17:34:16"
+    }
+  },
+  "obat": {
+    "1": {
+      "id": 1,
+      "kode_obat": "OBT-001",
+      "nama_obat": "Paracetamol 500 mg",
+      "kategori": "Analgesik & Antipiretik",
+      "satuan": "Tablet",
+      "harga_beli": 500.0,
+      "harga_jual": 1000.0,
+      "stok_saat_ini": 250,
+      "stok_minimum": 50,
+      "tanggal_kadaluwarsa": "2028-06-30",
+      "keterangan": "Pereda nyeri dan demam ringan hingga sedang",
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "kode_obat": "OBT-002",
+      "nama_obat": "Amoxicillin 500 mg",
+      "kategori": "Antibiotik",
+      "satuan": "Kapsul",
+      "harga_beli": 1200.0,
+      "harga_jual": 2500.0,
+      "stok_saat_ini": 120,
+      "stok_minimum": 40,
+      "tanggal_kadaluwarsa": "2027-12-31",
+      "keterangan": "Antibiotik spektrum luas untuk infeksi bakteri",
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "kode_obat": "OBT-003",
+      "nama_obat": "Cetirizine 10 mg",
+      "kategori": "Antihistamin",
+      "satuan": "Tablet",
+      "harga_beli": 800.0,
+      "harga_jual": 1800.0,
+      "stok_saat_ini": 80,
+      "stok_minimum": 25,
+      "tanggal_kadaluwarsa": "2028-04-15",
+      "keterangan": "Mengatasi gejala alergi, bersin, dan gatal-gatal",
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    }
+  },
+  "obat_mutasi": {
+    "1": {
+      "id": 1,
+      "obat_id": 1,
+      "jenis_mutasi": "Masuk",
+      "jumlah": 300,
+      "stok_sebelum": 0,
+      "stok_sesudah": 300,
+      "tanggal": "2026-10-11",
+      "no_referensi": "PO-202610-001",
+      "keterangan": "Penerimaan stok awal dari Distributor Kimia Farma",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "obat_id": 2,
+      "jenis_mutasi": "Masuk",
+      "jumlah": 150,
+      "stok_sebelum": 0,
+      "stok_sesudah": 150,
+      "tanggal": "2026-10-11",
+      "no_referensi": "PO-202610-001",
+      "keterangan": "Penerimaan stok awal dari Distributor Kimia Farma",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "obat_id": 4,
+      "jenis_mutasi": "Keluar",
+      "jumlah": 14,
+      "stok_sebelum": 20,
+      "stok_sesudah": 6,
+      "tanggal": "2026-10-20",
+      "no_referensi": "MUT-OUT-001",
+      "keterangan": "Penyerahan resep pasien rawat jalan",
+      "created_at": "2026-10-20 17:34:16"
+    }
+  },
+  "pasien": {
+    "1": {
+      "id": 1,
+      "no_rm": "RM-202610-0001",
+      "nik": "3171012305880001",
+      "nama_lengkap": "Ahmad Fauzi",
+      "jenis_kelamin": "L",
+      "tempat_lahir": "Jakarta",
+      "tanggal_lahir": "1988-05-23",
+      "alamat": "Jl. Salemba Tengah No. 12, Senen, Jakarta Pusat",
+      "no_telepon": "081801234567",
+      "golongan_darah": "O",
+      "pekerjaan": "Karyawan Swasta",
+      "riwayat_alergi": "Alergi Penisilin",
+      "kontak_darurat_nama": "Nurul (Istri)",
+      "kontak_darurat_telp": "081801234568",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "no_rm": "RM-202610-0002",
+      "nik": "3171024508920002",
+      "nama_lengkap": "Dewi Lestari",
+      "jenis_kelamin": "P",
+      "tempat_lahir": "Bandung",
+      "tanggal_lahir": "1992-08-15",
+      "alamat": "Jl. Cempaka Putih Timur No. 8, Jakarta Pusat",
+      "no_telepon": "081912345678",
+      "golongan_darah": "A",
+      "pekerjaan": "Guru",
+      "riwayat_alergi": "Tidak ada",
+      "kontak_darurat_nama": "Bambang (Suami)",
+      "kontak_darurat_telp": "081912345679",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "no_rm": "RM-202610-0003",
+      "nik": "3171031102950003",
+      "nama_lengkap": "Rian Hidayat",
+      "jenis_kelamin": "L",
+      "tempat_lahir": "Surabaya",
+      "tanggal_lahir": "1995-02-11",
+      "alamat": "Jl. Percetakan Negara IX No. 22, Jakarta Pusat",
+      "no_telepon": "082123456789",
+      "golongan_darah": "B",
+      "pekerjaan": "Wiraswasta",
+      "riwayat_alergi": "Alergi Debu",
+      "kontak_darurat_nama": "Hendra (Kakak)",
+      "kontak_darurat_telp": "082123456780",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    }
+  },
+  "pembayaran": {
+    "1": {
+      "id": 1,
+      "no_pembayaran": "PAY-202610-0001",
+      "tagihan_id": 1,
+      "tanggal_bayar": "2026-10-20 00:34:16",
+      "jumlah_bayar": 152000.0,
+      "metode_pembayaran": "QRIS",
+      "no_referensi": "QRIS-83921094",
+      "keterangan": "Lunas diterima melalui QRIS Mandiri",
+      "kasir_nama": "Admin",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "no_pembayaran": "PAY-202610-0002",
+      "tagihan_id": 2,
+      "tanggal_bayar": "2026-10-20 00:34:16",
+      "jumlah_bayar": 302000.0,
+      "metode_pembayaran": "Tunai",
+      "no_referensi": "CASH-99120",
+      "keterangan": "Uang pas diterima kasir",
+      "kasir_nama": "Admin",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "no_pembayaran": "PAY-20261021-0001",
+      "tagihan_id": 3,
+      "tanggal_bayar": "2026-10-21 07:08:42",
+      "jumlah_bayar": 100000.0,
+      "metode_pembayaran": "Tunai",
+      "no_referensi": "",
+      "keterangan": "",
+      "kasir_nama": "Admin",
+      "created_at": "2026-10-21 00:08:42"
+    }
+  },
+  "pendaftaran": {
+    "1": {
+      "id": 1,
+      "no_pendaftaran": "REG-202610-0001",
+      "no_antrean": "U-001",
+      "pasien_id": 1,
+      "dokter_id": 4,
+      "poli_id": 1,
+      "tanggal_kunjungan": "2026-10-20",
+      "waktu_daftar": "08:15:00",
+      "keluhan_awal": "Demam tinggi 3 hari, sakit kepala dan menggigil",
+      "status_antrean": "Selesai",
+      "catatan": "Selesai diperiksa dan obat telah diambil",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "no_pendaftaran": "REG-202610-0002",
+      "no_antrean": "G-001",
+      "pasien_id": 2,
+      "dokter_id": 3,
+      "poli_id": 2,
+      "tanggal_kunjungan": "2026-10-20",
+      "waktu_daftar": "09:30:00",
+      "keluhan_awal": "Gigi geraham belakang ngilu dan berdarah saat sikat",
+      "status_antrean": "Selesai",
+      "catatan": "Tindakan scaling karang gigi",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "no_pendaftaran": "REG-202610-0003",
+      "no_antrean": "D-001",
+      "pasien_id": 5,
+      "dokter_id": 1,
+      "poli_id": 4,
+      "tanggal_kunjungan": "2026-10-21",
+      "waktu_daftar": "08:00:00",
+      "keluhan_awal": "Kontrol rutin tekanan darah dan nyeri ulu hati",
+      "status_antrean": "Sedang Diperiksa",
+      "catatan": "Pasien sedang di ruang periksa dr. Andi",
+      "created_at": "2026-10-20 17:34:16"
+    }
+  },
+  "pengaturan_rs": {
+    "1": {
+      "id": 1,
+      "nama_rs": "RS Medika Sehat Sentosa",
+      "kode_rs": "RS-MEDIKA-01",
+      "alamat": "Jl. Kesehatan Raya No. 45, Menteng",
+      "kota": "Jakarta Pusat",
+      "provinsi": "DKI Jakarta",
+      "kode_pos": "10310",
+      "no_telepon": "(021) 3901234 / 0812-9876-5432",
+      "email": "kontak@rsmedikasehat.co.id",
+      "website": "www.rsmedikasehat.co.id",
+      "motto": "Melayani dengan Sepenuh Hati, Mengutamakan Keselamatan dan Kesembuhan Anda",
+      "biaya_pendaftaran_default": 25000.0,
+      "catatan_struk": "Terima kasih atas kepercayaan Anda memilih RS Medika Sehat Sentosa. Semoga lekas sembuh! Harap simpan bukti pembayaran ini untuk keperluan verifikasi.",
+      "updated_at": "2026-10-20 17:34:16"
+    }
+  },
+  "poli": {
+    "1": {
+      "id": 1,
+      "kode_poli": "POL-UMUM",
+      "nama_poli": "Poli Umum",
+      "lokasi": "Gedung A, Lantai 1",
+      "keterangan": "Pelayanan pemeriksaan kesehatan umum dan konsultasi primer",
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "kode_poli": "POL-GIGI",
+      "nama_poli": "Poli Gigi & Mulut",
+      "lokasi": "Gedung A, Lantai 2",
+      "keterangan": "Pelayanan kesehatan gigi, penambalan, pencabutan, dan scaling",
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "kode_poli": "POL-ANAK",
+      "nama_poli": "Poli Anak & Tumbuh Kembang",
+      "lokasi": "Gedung B, Lantai 1",
+      "keterangan": "Pelayanan kesehatan anak, imunisasi, dan pemantauan nutrisi",
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    }
+  },
+  "rekam_medis": {
+    "1": {
+      "id": 1,
+      "no_rekam_medis": "RMED-202610-0001",
+      "pendaftaran_id": 1,
+      "pasien_id": 1,
+      "dokter_id": 4,
+      "tanggal_periksa": "2026-10-20",
+      "waktu_periksa": "08:40:00",
+      "tekanan_darah": "120/80",
+      "suhu_tubuh": 38.4,
+      "berat_badan": 68.5,
+      "tinggi_badan": 172.0,
+      "denyut_nadi": 88,
+      "keluhan_utama": "Demam tinggi sejak 3 hari lalu, meriang disertai pusing dan lemas.",
+      "pemeriksaan_fisik": "Faring hiperemis ringan (+), tonsil T1-T1 tenang, sklera ikterik (-), ronki (-).",
+      "diagnosis": "Infeksi Saluran Pernapasan Akut (ISPA) dengan Febris Akut",
+      "kode_icd10": "J06.9",
+      "tindakan_diberikan": "Pemeriksaan fisik umum dan edukasi hidrasi aktif",
+      "catatan_dokter": "Istirahat total 3 hari, minum air putih hangat minimal 2 liter per hari. Jika demam > 39C segera kembali.",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "no_rekam_medis": "RMED-202610-0002",
+      "pendaftaran_id": 2,
+      "pasien_id": 2,
+      "dokter_id": 3,
+      "tanggal_periksa": "2026-10-20",
+      "waktu_periksa": "10:00:00",
+      "tekanan_darah": "115/75",
+      "suhu_tubuh": 36.6,
+      "berat_badan": 54.0,
+      "tinggi_badan": 158.0,
+      "denyut_nadi": 76,
+      "keluhan_utama": "Gigi geraham rahang bawah sering ngilu dan gusi berdarah.",
+      "pemeriksaan_fisik": "Gingivitis marginalis (+), akumulasi kalkulus subgingiva regio anterior dan posterior mandibula.",
+      "diagnosis": "Gingivitis Kronis ec Kalkulus Dental",
+      "kode_icd10": "K05.1",
+      "tindakan_diberikan": "Pembersihan karang gigi (Scaling) rahang atas dan bawah",
+      "catatan_dokter": "Edukasi cara menyikat gigi memutar, kurangi makanan manis dan kontrol berkala 6 bulan sekali.",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    }
+  },
+  "rekam_medis_tindakan": {
+    "1": {
+      "id": 1,
+      "rekam_medis_id": 1,
+      "tindakan_id": 1,
+      "biaya": 30000.0,
+      "catatan": "Pemeriksaan tanda vital dan diagnosis umum"
+    },
+    "2": {
+      "id": 2,
+      "rekam_medis_id": 2,
+      "tindakan_id": 6,
+      "biaya": 180000.0,
+      "catatan": "Pembersihan karang gigi penuh rahang atas dan bawah"
+    }
+  },
+  "resep": {
+    "1": {
+      "id": 1,
+      "no_resep": "RSP-202610-0001",
+      "rekam_medis_id": 1,
+      "pasien_id": 1,
+      "dokter_id": 4,
+      "tanggal_resep": "2026-10-20",
+      "status_resep": "Selesai",
+      "total_harga_obat": 47000.0,
+      "catatan": "Diminum sesudah makan secara teratur",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "no_resep": "RSP-202610-0002",
+      "rekam_medis_id": 2,
+      "pasien_id": 2,
+      "dokter_id": 3,
+      "tanggal_resep": "2026-10-20",
+      "status_resep": "Selesai",
+      "total_harga_obat": 32000.0,
+      "catatan": "Gunakan obat kumur dan pereda ngilu",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    }
+  },
+  "tagihan": {
+    "1": {
+      "id": 1,
+      "no_tagihan": "INV-202610-0001",
+      "pendaftaran_id": 1,
+      "pasien_id": 1,
+      "tanggal_tagihan": "2026-10-20",
+      "biaya_pendaftaran": 25000.0,
+      "biaya_konsultasi": 50000.0,
+      "biaya_tindakan": 30000.0,
+      "biaya_obat": 47000.0,
+      "total_tagihan": 152000.0,
+      "status_pembayaran": "Lunas",
+      "catatan": "Pembayaran via QRIS Berhasil",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "no_tagihan": "INV-202610-0002",
+      "pendaftaran_id": 2,
+      "pasien_id": 2,
+      "tanggal_tagihan": "2026-10-20",
+      "biaya_pendaftaran": 25000.0,
+      "biaya_konsultasi": 65000.0,
+      "biaya_tindakan": 180000.0,
+      "biaya_obat": 32000.0,
+      "total_tagihan": 302000.0,
+      "status_pembayaran": "Lunas",
+      "catatan": "Pembayaran Tunai di Kasir 1",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "no_tagihan": "INV-20261021-0001",
+      "pendaftaran_id": 7,
+      "pasien_id": 2,
+      "tanggal_tagihan": "2026-10-21",
+      "biaya_pendaftaran": 25000.0,
+      "biaya_konsultasi": 75000.0,
+      "biaya_tindakan": 0.0,
+      "biaya_obat": 0.0,
+      "total_tagihan": 100000.0,
+      "status_pembayaran": "Lunas",
+      "catatan": null,
+      "created_at": "2026-10-21 00:04:16",
+      "updated_at": "2026-10-21 00:08:42"
+    }
+  },
+  "tindakan_medis": {
+    "1": {
+      "id": 1,
+      "kode_tindakan": "TND-001",
+      "nama_tindakan": "Pemeriksaan & Konsultasi Medis",
+      "kategori": "Umum",
+      "tarif": 30000.0,
+      "keterangan": "Pemeriksaan tanda vital dan diagnosis dasar",
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "2": {
+      "id": 2,
+      "kode_tindakan": "TND-002",
+      "nama_tindakan": "Perawatan & Pembersihan Luka Ringan",
+      "kategori": "Bedah Minor",
+      "tarif": 45000.0,
+      "keterangan": "Pembersihan luka lecet atau sayat dan aplikasi antiseptik",
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    },
+    "3": {
+      "id": 3,
+      "kode_tindakan": "TND-003",
+      "nama_tindakan": "Jahit Luka (Hecting 1-3 Simpul)",
+      "kategori": "Bedah Minor",
+      "tarif": 95000.0,
+      "keterangan": "Penjahitan luka terbuka termasuk anestesi lokal",
+      "status_aktif": "Aktif",
+      "created_at": "2026-10-20 17:34:16"
+    }
+  },
+  "users": {
+    "1": {
+      "id": 1,
+      "username": "admin",
+      "email": "admin@rsmedika.co.id",
+      "password_hash": "scrypt:32768:8:1$R4EsIPeu59VWgHfM$d46d673db70de1297420dfe287245de1b90378c7b471bc5633098065c308269a350c33e2fc8fbe6cfad195dc7f495a179be4116831bbb1aaa3d96f46cec59c26",
+      "nama_lengkap": "Administrator Utama",
+      "no_telepon": "081234567890",
+      "role": "Admin",
+      "foto_profil": null,
+      "terakhir_login": "2026-10-21 06:58:01",
+      "created_at": "2026-10-20 17:34:16",
+      "updated_at": "2026-10-20 23:58:01"
+    }
+  }
+}

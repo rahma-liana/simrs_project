@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Detail Resep - {{ resep.no_resep }}{% endblock %}
+
+{% block content %}
+<div class="mb-4 no-print">
+  <a href="{{ url_for('farmasi.resep_index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar Resep
+  </a>
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+      <h2 class="h4 fw-bold text-slate-900 mb-1">Rincian Resep Obat Pasien</h2>
+      <p class="text-muted small mb-0">Nomor: <strong class="text-primary font-monospace">{{ resep.no_resep }}</strong> &bull; Rekam Medis: {{ resep.no_rekam_medis }}</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button onclick="window.print()" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-printer me-1"></i>Cetak Resep
+      </button>
+
+      {% if resep.status_resep != 'Selesai' %}
+        <form method="POST" action="{{ url_for('farmasi.serahkan_resep', id=resep.id) }}">
+          <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin ingin menyerahkan obat? Stok obat di database akan otomatis dipotong secara permanen.')">
+            <i class="bi bi-check2-circle me-1"></i>Serahkan Obat & Potong Stok
+          </button>
+        </form>
+      {% endif %}
+
+      {% if resep.tagihan_id %}
+        <a href="{{ url_for('kasir.bayar', id=resep.tagihan_id) }}" class="btn btn-primary btn-sm">
+          <i class="bi bi-cash-stack me-1"></i>Tagihan Kasir ({{ resep.status_pembayaran }})
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-4 p-md-5">
+
+    <!-- Header Dokumen Resep -->
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+      <div>
+        <h5 class="fw-bold text-slate-900 mb-0">RESEP OBAT & FARMASI RAWAT JALAN</h5>
+        <div class="small text-muted">{{ hosp.nama_rs }}</div>
+      </div>
+      <div class="text-end">
+        <span class="badge {% if resep.status_resep == 'Selesai' %}bg-success{% else %}bg-warning text-dark{% endif %} fs-6 px-3 py-1">
+          Status: {{ resep.status_resep }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Metadata Resep -->
+    <div class="row g-3 p-3 bg-light rounded mb-4 small">
+      <div class="col-sm-6 col-md-3">
+        <span class="text-muted d-block">Nomor Resep:</span>
+        <strong class="font-monospace text-primary fs-6">{{ resep.no_resep }}</strong>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <span class="text-muted d-block">Nama Pasien:</span>
+        <strong class="fs-6">{{ resep.nama_pasien }}</strong> ({{ resep.no_rm }})
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <span class="text-muted d-block">Dokter Penulis:</span>
+        <strong>{{ resep.nama_dokter }}</strong>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <span class="text-muted d-block">Tanggal Resep:</span>
+        <strong>{{ resep.tanggal_resep | tanggal_indo }}</strong>
+      </div>
+      {% if resep.riwayat_alergi and resep.riwayat_alergi != 'Tidak ada' %}
+        <div class="col-12 border-top pt-2 mt-2">
+          <span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>Perhatian Alergi Pasien:</span>
+          <span class="text-danger">{{ resep.riwayat_alergi }}</span>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Tabel Rincian Obat -->
+    <h6 class="fw-bold text-slate-800 mb-3"><i class="bi bi-capsule me-2 text-primary"></i>Daftar Obat & Aturan Pakai (Signa)</h6>
+    <div class="table-responsive mb-4">
+      <table class="table table-bordered table-custom mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>No</th>
+            <th>Kode</th>
+            <th>Nama Obat</th>
+            <th>Aturan Pakai / Signa</th>
+            <th class="text-center">Jumlah</th>
+            <th class="text-end">Harga Satuan</th>
+            <th class="text-end">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in items %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td><small class="font-monospace text-muted">{{ it.kode_obat }}</small></td>
+              <td>
+                <strong class="text-slate-800">{{ it.nama_obat }}</strong>
+                <div class="small text-muted">Sisa Stok Fisik: {{ it.stok_saat_ini }} {{ it.satuan }}</div>
+              </td>
+              <td>
+                <span class="badge bg-light text-primary border fs-6 px-2 py-1">{{ it.aturan_pakai }}</span>
+              </td>
+              <td class="text-center fw-bold">{{ it.jumlah }} {{ it.satuan }}</td>
+              <td class="text-end">{{ it.harga_satuan | rupiah }}</td>
+              <td class="text-end fw-semibold text-primary">{{ it.subtotal | rupiah }}</td>
+            </tr>
+          {% endfor %}
+          <tr class="table-light">
+            <td colspan="6" class="text-end fw-bold">TOTAL HARGA OBAT:</td>
+            <td class="text-end fw-bold fs-6 text-success">{{ resep.total_harga_obat | rupiah }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    {% if resep.catatan %}
+      <div class="p-3 bg-light rounded border mb-4">
+        <strong class="small d-block text-muted">Catatan Dokter / Farmasi:</strong>
+        <p class="mb-0 small text-secondary">{{ resep.catatan }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Pengesahan Petugas Farmasi -->
+    <div class="row pt-4 border-top">
+      <div class="col-6">
+        <small class="text-muted d-block">Penerima Obat / Pasien,</small>
+        <div style="height: 50px;"></div>
+        <strong class="small">({{ resep.nama_pasien }})</strong>
+      </div>
+      <div class="col-6 text-end">
+        <small class="text-muted d-block">Petugas Farmasi / Apoteker,</small>
+        <div style="height: 50px;"></div>
+        <strong class="small text-primary">(Instalasi Farmasi RS)</strong>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

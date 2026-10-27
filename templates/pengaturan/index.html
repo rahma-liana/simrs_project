@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Pengaturan Sistem{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <h2 class="h4 fw-bold text-slate-900 mb-1">Pengaturan Sistem & Profil Rumah Sakit</h2>
+  <p class="text-muted small mb-0">Kelola identitas resmi rumah sakit, akun Administrator, keamanan password, cadangan database, dan log aktivitas.</p>
+</div>
+
+<div class="row g-4">
+  <!-- Kolom Kiri: Profil Rumah Sakit -->
+  <div class="col-lg-7">
+    <div class="card-custom mb-4">
+      <div class="card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-hospital text-primary"></i>
+          <span>Profil & Identitas Rumah Sakit</span>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST">
+          <input type="hidden" name="action_type" value="profil_rs">
+
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label">Nama Rumah Sakit <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="nama_rs" value="{{ hosp.nama_rs }}" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Biaya Pendaftaran Default (Rp)</label>
+              <input type="text" class="form-control input-rupiah" name="biaya_pendaftaran_default" 
+                     value="{{ hosp.biaya_pendaftaran_default | int }}">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Alamat Lengkap</label>
+              <textarea class="form-control" name="alamat" rows="2" required>{{ hosp.alamat }}</textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Kota / Kabupaten</label>
+              <input type="text" class="form-control" name="kota" value="{{ hosp.kota }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Provinsi</label>
+              <input type="text" class="form-control" name="provinsi" value="{{ hosp.provinsi }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nomor Telepon / Call Center</label>
+              <input type="text" class="form-control" name="no_telepon" value="{{ hosp.no_telepon }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email Resmi</label>
+              <input type="email" class="form-control" name="email" value="{{ hosp.email }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Website</label>
+              <input type="text" class="form-control" name="website" value="{{ hosp.website }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Motto Layanan</label>
+              <input type="text" class="form-control" name="motto" value="{{ hosp.motto }}">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Catatan Kaki Struk Kasir</label>
+              <input type="text" class="form-control" name="catatan_struk" value="{{ hosp.catatan_struk }}">
+            </div>
+          </div>
+
+          <div class="text-end border-top pt-3 mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+              <i class="bi bi-save me-1"></i>Simpan Profil RS
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Backup & Cadangan Database -->
+    <div class="card-custom">
+      <div class="card-header bg-light">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-database-down text-success"></i>
+          <span>Cadangan & Pemulihan Database (Backup)</span>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <p class="text-secondary small mb-3">
+          Amankan seluruh data pasien, rekam medis, farmasi, dan transaksi keuangan rumah sakit dengan mengunduh salinan database SQL terkompresi.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{{ url_for('pengaturan.backup_database') }}" class="btn btn-success">
+            <i class="bi bi-cloud-arrow-down-fill me-1"></i>Unduh Cadangan Database (.SQL)
+          </a>
+          <a href="{{ url_for('pengaturan.log_view') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-shield-check me-1"></i>Lihat Log Aktivitas Sistem
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kolom Kanan: Akun Admin & Ganti Password -->
+  <div class="col-lg-5">
+    <!-- Profil Akun Admin -->
+    <div class="card-custom mb-4">
+      <div class="card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-person-badge text-primary"></i>
+          <span>Informasi Akun Admin</span>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST">
+          <input type="hidden" name="action_type" value="akun_admin">
+          
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control bg-light font-monospace" value="{{ user.username }}" readonly>
+            <div class="form-text">Username login bersifat permanen.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Nama Lengkap Administrator <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="nama_lengkap" value="{{ user.nama_lengkap }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email Admin <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" name="email" value="{{ user.email }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Nomor Telepon</label>
+            <input type="text" class="form-control" name="no_telepon" value="{{ user.no_telepon or '' }}">
+          </div>
+
+          <div class="text-end border-top pt-3">
+            <button type="submit" class="btn btn-outline-primary">
+              <i class="bi bi-check2 me-1"></i>Perbarui Info Akun
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Ganti Password Admin -->
+    <div class="card-custom">
+      <div class="card-header">
+        <div class="d-flex align-items-center gap-2 text-danger">
+          <i class="bi bi-shield-lock-fill"></i>
+          <span>Ubah Password Akun Admin</span>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST">
+          <input type="hidden" name="action_type" value="ganti_password">
+
+          <div class="mb-3">
+            <label class="form-label">Password Saat Ini (Lama) <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" name="password_lama" required placeholder="Masukkan password lama">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password Baru <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" name="password_baru" minlength="6" required placeholder="Minimal 6 karakter">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Ulangi Password Baru <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" name="password_konfirmasi" minlength="6" required placeholder="Ketik ulang password baru">
+          </div>
+
+          <div class="text-end border-top pt-3">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Ubah password akun Admin sekarang?')">
+              <i class="bi bi-key-fill me-1"></i>Ganti Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

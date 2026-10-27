@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Tambah Obat Baru' if action == 'tambah' else 'Edit Data Obat' }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('farmasi.obat_index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar Obat
+  </a>
+  <h2 class="h4 fw-bold text-slate-900 mb-1">{{ 'Tambah Obat Baru ke Farmasi' if action == 'tambah' else 'Perbarui Data Obat' }}</h2>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-4">
+    <form method="POST">
+      <div class="row g-3">
+        <!-- Kode Obat -->
+        <div class="col-md-4">
+          <label for="kode_obat" class="form-label">Kode Obat <span class="text-danger">*</span></label>
+          <input type="text" class="form-control text-uppercase" id="kode_obat" name="kode_obat" required
+                 value="{{ obat.kode_obat if obat else (form.kode_obat if form else '') }}" placeholder="Contoh: OBT-015">
+        </div>
+
+        <!-- Nama Obat -->
+        <div class="col-md-8">
+          <label for="nama_obat" class="form-label">Nama Obat & Dosis <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="nama_obat" name="nama_obat" required
+                 value="{{ obat.nama_obat if obat else (form.nama_obat if form else '') }}" placeholder="Contoh: Amoxicillin 500 mg">
+        </div>
+
+        <!-- Kategori -->
+        <div class="col-md-4">
+          <label for="kategori" class="form-label">Kategori Obat</label>
+          <input type="text" class="form-control" id="kategori" name="kategori"
+                 value="{{ obat.kategori if obat else (form.kategori if form else 'Umum') }}" placeholder="Contoh: Antibiotik / Analgesik / Vitamin">
+        </div>
+
+        <!-- Satuan -->
+        <div class="col-md-4">
+          <label for="satuan" class="form-label">Satuan Kemasan <span class="text-danger">*</span></label>
+          <select class="form-select" id="satuan" name="satuan" required>
+            {% for st in ['Tablet', 'Kapsul', 'Sirup/Botol', 'Ampul', 'Pcs/Inhaler', 'Salep/Tube', 'Drop'] %}
+              <option value="{{ st }}" {% if (obat and obat.satuan == st) or (form and form.satuan == st) %}selected{% endif %}>{{ st }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Tanggal Kadaluwarsa -->
+        <div class="col-md-4">
+          <label for="tanggal_kadaluwarsa" class="form-label">Tanggal Kedaluwarsa (Exp) <span class="text-danger">*</span></label>
+          <input type="date" class="form-control" id="tanggal_kadaluwarsa" name="tanggal_kadaluwarsa" required
+                 value="{{ obat.tanggal_kadaluwarsa if obat else (form.tanggal_kadaluwarsa if form else '') }}">
+        </div>
+
+        <!-- Harga Beli -->
+        <div class="col-md-3">
+          <label for="harga_beli" class="form-label">Harga Beli / HPP</label>
+          <div class="input-group">
+            <span class="input-group-text">Rp</span>
+            <input type="text" class="form-control input-rupiah" id="harga_beli" name="harga_beli"
+                   value="{{ (obat.harga_beli | int) if obat else '0' }}">
+          </div>
+        </div>
+
+        <!-- Harga Jual -->
+        <div class="col-md-3">
+          <label for="harga_jual" class="form-label">Harga Jual / Resep <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text">Rp</span>
+            <input type="text" class="form-control input-rupiah" id="harga_jual" name="harga_jual" required
+                   value="{{ (obat.harga_jual | int) if obat else '0' }}">
+          </div>
+        </div>
+
+        <!-- Stok Saat Ini (Hanya saat tambah) -->
+        {% if action == 'tambah' %}
+          <div class="col-md-3">
+            <label for="stok_saat_ini" class="form-label">Stok Awal Fisik</label>
+            <input type="number" class="form-control" id="stok_saat_ini" name="stok_saat_ini" min="0" value="0">
+            <div class="form-text">Otomatis dicatat sebagai mutasi awal masuk.</div>
+          </div>
+        {% endif %}
+
+        <!-- Stok Minimum -->
+        <div class="col-md-3">
+          <label for="stok_minimum" class="form-label">Batas Stok Minimum</label>
+          <input type="number" class="form-control" id="stok_minimum" name="stok_minimum" min="0"
+                 value="{{ obat.stok_minimum if obat else 10 }}">
+          <div class="form-text">Memicu alert peringatan di dashboard jika tercapai.</div>
+        </div>
+
+        <!-- Status Aktif -->
+        <div class="col-md-3">
+          <label for="status_aktif" class="form-label">Status Obat</label>
+          <select class="form-select" id="status_aktif" name="status_aktif">
+            <option value="Aktif" {% if not obat or obat.status_aktif == 'Aktif' %}selected{% endif %}>Aktif</option>
+            <option value="Nonaktif" {% if obat and obat.status_aktif == 'Nonaktif' %}selected{% endif %}>Nonaktif / Diskontinu</option>
+          </select>
+        </div>
+
+        <!-- Keterangan -->
+        <div class="col-12">
+          <label for="keterangan" class="form-label">Keterangan / Indikasi Penggunaan</label>
+          <textarea class="form-control" id="keterangan" name="keterangan" rows="2" 
+                    placeholder="Contoh: Obat keras dengan resep dokter, simpan pada suhu ruang di bawah 30 derajat">{{ obat.keterangan if obat else (form.keterangan if form else '') }}</textarea>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+        <a href="{{ url_for('farmasi.obat_index') }}" class="btn btn-light px-4">Batal</a>
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="bi bi-save me-1"></i>Simpan Obat
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Tambah Pasien Baru' if action == 'tambah' else 'Edit Data Pasien' }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('pasien.index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar Pasien
+  </a>
+  <h2 class="h4 fw-bold text-slate-900 mb-1">{{ 'Form Pendaftaran Pasien Baru' if action == 'tambah' else 'Perbarui Data Pasien' }}</h2>
+  <p class="text-muted small mb-0">Isi seluruh data identitas pasien secara lengkap untuk mempermudah pelayanan rekam medis.</p>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-4">
+    <form method="POST">
+      
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+            <i class="bi bi-card-heading me-2"></i>1. Identitas Pokok & Rekam Medis
+          </h6>
+        </div>
+
+        <!-- No. RM -->
+        <div class="col-md-6">
+          <label for="no_rm" class="form-label">Nomor Rekam Medis (No. RM) <span class="text-danger">*</span></label>
+          <input type="text" class="form-control bg-light fw-bold text-primary" id="no_rm" name="no_rm" 
+                 value="{{ pasien.no_rm if pasien else auto_no_rm }}" readonly>
+          <div class="form-text">Dibuat otomatis oleh sistem dengan pola unik.</div>
+        </div>
+
+        <!-- NIK -->
+        <div class="col-md-6">
+          <label for="nik" class="form-label">NIK (Nomor Induk Kependudukan) <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="nik" name="nik" maxlength="16" required
+                 value="{{ pasien.nik if pasien else (form.nik if form else '') }}" placeholder="16 digit angka NIK">
+        </div>
+
+        <!-- Nama Lengkap -->
+        <div class="col-md-8">
+          <label for="nama_lengkap" class="form-label">Nama Lengkap Pasien <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required
+                 value="{{ pasien.nama_lengkap if pasien else (form.nama_lengkap if form else '') }}" placeholder="Contoh: Budi Santoso">
+        </div>
+
+        <!-- Jenis Kelamin -->
+        <div class="col-md-4">
+          <label class="form-label d-block">Jenis Kelamin <span class="text-danger">*</span></label>
+          <div class="pt-1">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="jenis_kelamin" id="jk_l" value="L" 
+                     {% if (pasien and pasien.jenis_kelamin == 'L') or (not pasien and (not form or form.jenis_kelamin == 'L')) %}checked{% endif %}>
+              <label class="form-check-label" for="jk_l">Laki-laki</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="jenis_kelamin" id="jk_p" value="P"
+                     {% if (pasien and pasien.jenis_kelamin == 'P') or (form and form.jenis_kelamin == 'P') %}checked{% endif %}>
+              <label class="form-check-label" for="jk_p">Perempuan</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tempat Lahir -->
+        <div class="col-md-6">
+          <label for="tempat_lahir" class="form-label">Tempat Lahir <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahir" required
+                 value="{{ pasien.tempat_lahir if pasien else (form.tempat_lahir if form else '') }}" placeholder="Kota kelahiran">
+        </div>
+
+        <!-- Tanggal Lahir -->
+        <div class="col-md-6">
+          <label for="tanggal_lahir" class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
+          <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir" required
+                 value="{{ pasien.tanggal_lahir if pasien else (form.tanggal_lahir if form else '') }}">
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+            <i class="bi bi-geo-alt me-2"></i>2. Kontak & Alamat
+          </h6>
+        </div>
+
+        <!-- No. Telepon -->
+        <div class="col-md-6">
+          <label for="no_telepon" class="form-label">Nomor Telepon / WhatsApp <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="no_telepon" name="no_telepon" required
+                 value="{{ pasien.no_telepon if pasien else (form.no_telepon if form else '') }}" placeholder="Contoh: 08123456789">
+        </div>
+
+        <!-- Golongan Darah -->
+        <div class="col-md-3">
+          <label for="golongan_darah" class="form-label">Golongan Darah</label>
+          <select class="form-select" id="golongan_darah" name="golongan_darah">
+            {% for gd in ['-', 'A', 'B', 'AB', 'O'] %}
+              <option value="{{ gd }}" {% if (pasien and pasien.golongan_darah == gd) or (form and form.golongan_darah == gd) %}selected{% endif %}>{{ gd }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Pekerjaan -->
+        <div class="col-md-3">
+          <label for="pekerjaan" class="form-label">Pekerjaan</label>
+          <input type="text" class="form-control" id="pekerjaan" name="pekerjaan"
+                 value="{{ pasien.pekerjaan if pasien else (form.pekerjaan if form else '') }}" placeholder="Contoh: Karyawan Swasta">
+        </div>
+
+        <!-- Alamat Lengkap -->
+        <div class="col-12">
+          <label for="alamat" class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
+          <textarea class="form-control" id="alamat" name="alamat" rows="2" required 
+                    placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan">{{ pasien.alamat if pasien else (form.alamat if form else '') }}</textarea>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+            <i class="bi bi-shield-plus me-2"></i>3. Riwayat Medis Khusus & Kontak Darurat
+          </h6>
+        </div>
+
+        <!-- Riwayat Alergi -->
+        <div class="col-md-6">
+          <label for="riwayat_alergi" class="form-label">Riwayat Alergi Obat / Makanan</label>
+          <input type="text" class="form-control" id="riwayat_alergi" name="riwayat_alergi"
+                 value="{{ pasien.riwayat_alergi if pasien else (form.riwayat_alergi if form else 'Tidak ada') }}" placeholder="Contoh: Alergi Penisilin, Seafood">
+          <div class="form-text text-danger">Penting untuk kehati-hatian dokter dan farmasi.</div>
+        </div>
+
+        <!-- Kontak Darurat Nama -->
+        <div class="col-md-3">
+          <label for="kontak_darurat_nama" class="form-label">Nama Kontak Darurat</label>
+          <input type="text" class="form-control" id="kontak_darurat_nama" name="kontak_darurat_nama"
+                 value="{{ pasien.kontak_darurat_nama if pasien else (form.kontak_darurat_nama if form else '') }}" placeholder="Nama keluarga/wali">
+        </div>
+
+        <!-- Kontak Darurat Telp -->
+        <div class="col-md-3">
+          <label for="kontak_darurat_telp" class="form-label">No. Telp Darurat</label>
+          <input type="text" class="form-control" id="kontak_darurat_telp" name="kontak_darurat_telp"
+                 value="{{ pasien.kontak_darurat_telp if pasien else (form.kontak_darurat_telp if form else '') }}" placeholder="Nomor telepon darurat">
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 border-top pt-3">
+        <a href="{{ url_for('pasien.index') }}" class="btn btn-light px-4">Batal</a>
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="bi bi-save me-1"></i>{{ 'Simpan Data Pasien' if action == 'tambah' else 'Simpan Perubahan' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

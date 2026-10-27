@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Jadwal Praktik Dokter{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Jadwal Praktik Dokter Mingguan</h2>
+    <p class="text-muted small mb-0">Atur hari dan jam praktik, batasan kuota antrean harian per dokter dan poliklinik.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('jadwal.tambah') }}" class="btn btn-primary">
+      <i class="bi bi-calendar-plus-fill me-1"></i>Tambah Jadwal Baru
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <!-- Filter Hari & Poli -->
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('jadwal.index') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-3 p-0 pe-md-2">
+        <select class="form-select" name="hari">
+          <option value="">-- Semua Hari --</option>
+          {% for h in hari_list %}
+            <option value="{{ h }}" {% if filter_hari == h %}selected{% endif %}>{{ h }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <select class="form-select" name="poli_id">
+          <option value="">-- Semua Poli --</option>
+          {% for p in poli_list %}
+            <option value="{{ p.id }}" {% if filter_poli|string == p.id|string %}selected{% endif %}>{{ p.nama_poli }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+        {% if filter_hari or filter_poli %}
+          <a href="{{ url_for('jadwal.index') }}" class="btn btn-light ms-1">Reset</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>Hari Praktik</th>
+            <th>Dokter</th>
+            <th>Poliklinik</th>
+            <th>Jam Praktik</th>
+            <th>Kuota Pasien</th>
+            <th>Status</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if jadwal_list %}
+            {% for j in jadwal_list %}
+              <tr>
+                <td>
+                  <span class="badge bg-primary text-white fs-6 px-3 py-1">{{ j.hari }}</span>
+                </td>
+                <td>
+                  <strong class="text-slate-800 d-block">{{ j.nama_dokter }}</strong>
+                  <span class="text-muted small">{{ j.spesialisasi }}</span>
+                </td>
+                <td><span class="badge bg-primary-subtle text-primary">{{ j.nama_poli }}</span></td>
+                <td>
+                  <i class="bi bi-clock me-1 text-primary"></i>
+                  <strong>{{ j.jam_mulai }}</strong> s/d <strong>{{ j.jam_selesai }}</strong> WIB
+                </td>
+                <td><span class="badge bg-light text-dark border">{{ j.kuota_pasien }} Pasien</span></td>
+                <td>
+                  {% if j.status == 'Aktif' %}
+                    <span class="badge bg-success-subtle text-success">Aktif</span>
+                  {% else %}
+                    <span class="badge bg-danger-subtle text-danger">Libur / Cuti</span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <a href="{{ url_for('jadwal.edit', id=j.id) }}" class="btn btn-light" title="Edit Jadwal">
+                      <i class="bi bi-pencil-fill text-warning"></i>
+                    </a>
+                    <button type="button" class="btn btn-light" title="Hapus Jadwal"
+                            onclick="konfirmasiHapus('form-hapus-jadwal-{{ j.id }}', 'Jadwal {{ j.nama_dokter }} ({{ j.hari }})')">
+                      <i class="bi bi-trash-fill text-danger"></i>
+                    </button>
+                  </div>
+                  <form id="form-hapus-jadwal-{{ j.id }}" method="POST" action="{{ url_for('jadwal.hapus', id=j.id) }}" style="display:none;"></form>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center py-4 text-muted">Belum ada jadwal praktik dokter yang sesuai.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

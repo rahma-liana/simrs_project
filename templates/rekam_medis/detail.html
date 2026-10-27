@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Lembar Rekam Medis - {{ rm.no_rekam_medis }}{% endblock %}
+
+{% block content %}
+<div class="mb-4 no-print">
+  <a href="{{ url_for('rekam_medis.index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar Rekam Medis
+  </a>
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div>
+      <h2 class="h4 fw-bold text-slate-900 mb-1">Lembar Catatan Rekam Medis Pasien</h2>
+      <p class="text-muted small mb-0">Nomor: <strong class="text-primary font-monospace">{{ rm.no_rekam_medis }}</strong> &bull; Registrasi: {{ rm.no_pendaftaran }}</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button onclick="window.print()" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-printer me-1"></i>Cetak Lembar Medis
+      </button>
+      {% if not resep %}
+        <a href="{{ url_for('farmasi.buat_resep', rekam_medis_id=rm.id) }}" class="btn btn-success btn-sm">
+          <i class="bi bi-capsule me-1"></i>Buat Resep Obat
+        </a>
+      {% endif %}
+      {% if rm.tagihan_id %}
+        <a href="{{ url_for('kasir.bayar', id=rm.tagihan_id) }}" class="btn btn-primary btn-sm">
+          <i class="bi bi-cash-stack me-1"></i>Buka Kasir ({{ rm.status_pembayaran }})
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-4 p-md-5">
+
+    <!-- Identitas Kop Rumah Sakit (Tampil saat cetak & layar) -->
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-4 mb-4">
+      <div class="d-flex align-items-center gap-3">
+        <div class="brand-icon" style="width: 50px; height: 50px; font-size: 1.6rem;">
+          <i class="bi bi-hospital"></i>
+        </div>
+        <div>
+          <h4 class="fw-bold mb-0 text-slate-900">{{ hosp.nama_rs }}</h4>
+          <div class="small text-muted">{{ hosp.alamat }}, {{ hosp.kota }}, {{ hosp.provinsi }}</div>
+          <div class="small text-muted">Telp: {{ hosp.no_telepon }} | Email: {{ hosp.email }}</div>
+        </div>
+      </div>
+      <div class="text-end">
+        <span class="badge bg-primary text-white fs-6 px-3 py-1 mb-1 d-inline-block">REKAM MEDIS RAWAT JALAN</span>
+        <div class="small text-muted font-monospace">{{ rm.no_rekam_medis }}</div>
+      </div>
+    </div>
+
+    <!-- Informasi Pasien & Pemeriksaan -->
+    <div class="row g-3 p-3 bg-light rounded-3 mb-4">
+      <div class="col-sm-6 col-md-3">
+        <span class="text-muted small d-block">Nama Lengkap Pasien:</span>
+        <strong class="text-slate-900">{{ rm.nama_pasien }}</strong>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <span class="text-muted small d-block">Nomor RM / NIK:</span>
+        <strong class="text-primary font-monospace">{{ rm.no_rm }}</strong>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <span class="text-muted small d-block">Tanggal / Waktu Periksa:</span>
+        <strong>{{ rm.tanggal_periksa | tanggal_indo }} ({{ rm.waktu_periksa }})</strong>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <span class="text-muted small d-block">Dokter Pemeriksa:</span>
+        <strong>{{ rm.nama_dokter }}</strong>
+        <div class="small text-muted">{{ rm.nama_poli }}</div>
+      </div>
+      <div class="col-12 border-top pt-2 mt-2">
+        <div class="d-flex flex-wrap gap-4 small">
+          <span><strong>Jenis Kelamin:</strong> {{ 'Laki-laki' if rm.jenis_kelamin == 'L' else 'Perempuan' }}</span>
+          <span><strong>Gol. Darah:</strong> {{ rm.golongan_darah }}</span>
+          <span><strong>Alergi:</strong> <span class="text-danger fw-bold">{{ rm.riwayat_alergi or 'Tidak ada' }}</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tanda-Tanda Vital -->
+    <h6 class="fw-bold text-primary mb-2"><i class="bi bi-heart-pulse me-2"></i>Tanda-Tanda Vital Pasien</h6>
+    <div class="row g-2 mb-4">
+      <div class="col-6 col-md">
+        <div class="p-2 border rounded text-center">
+          <small class="text-muted d-block">Tekanan Darah</small>
+          <strong>{{ rm.tekanan_darah or '-' }}</strong> <small class="text-muted">mmHg</small>
+        </div>
+      </div>
+      <div class="col-6 col-md">
+        <div class="p-2 border rounded text-center">
+          <small class="text-muted d-block">Suhu Badan</small>
+          <strong>{{ rm.suhu_tubuh or '-' }}</strong> <small class="text-muted">&deg;C</small>
+        </div>
+      </div>
+      <div class="col-6 col-md">
+        <div class="p-2 border rounded text-center">
+          <small class="text-muted d-block">Berat Badan</small>
+          <strong>{{ rm.berat_badan or '-' }}</strong> <small class="text-muted">kg</small>
+        </div>
+      </div>
+      <div class="col-6 col-md">
+        <div class="p-2 border rounded text-center">
+          <small class="text-muted d-block">Tinggi Badan</small>
+          <strong>{{ rm.tinggi_badan or '-' }}</strong> <small class="text-muted">cm</small>
+        </div>
+      </div>
+      <div class="col-6 col-md">
+        <div class="p-2 border rounded text-center">
+          <small class="text-muted d-block">Denyut Nadi</small>
+          <strong>{{ rm.denyut_nadi or '-' }}</strong> <small class="text-muted">bpm</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hasil Anamnesis & Diagnosis -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <div class="border rounded p-3 h-100">
+          <h6 class="fw-bold text-slate-800 border-bottom pb-2 mb-2">Keluhan Utama (Anamnesis)</h6>
+          <p class="mb-0 text-secondary" style="white-space: pre-line;">{{ rm.keluhan_utama }}</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="border rounded p-3 h-100">
+          <h6 class="fw-bold text-slate-800 border-bottom pb-2 mb-2">Pemeriksaan Fisik</h6>
+          <p class="mb-0 text-secondary" style="white-space: pre-line;">{{ rm.pemeriksaan_fisik or 'Tidak ada catatan fisik khusus.' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diagnosis & ICD-10 -->
+    <div class="p-3 bg-primary-subtle border border-primary-subtle rounded mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <span class="text-primary small fw-bold text-uppercase d-block">Diagnosis Dokter:</span>
+          <h5 class="fw-bold text-slate-900 mb-0">{{ rm.diagnosis }}</h5>
+        </div>
+        {% if rm.kode_icd10 %}
+          <div class="text-end">
+            <span class="text-muted small d-block">Kode ICD-10:</span>
+            <span class="badge bg-primary fs-6 font-monospace">{{ rm.kode_icd10 }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Tindakan Medis Dilakukan -->
+    {% if tindakan_list %}
+      <h6 class="fw-bold text-primary mb-2"><i class="bi bi-bandaid me-2"></i>Tindakan & Prosedur Medis yang Diberikan</h6>
+      <div class="table-responsive mb-4">
+        <table class="table table-bordered table-sm small mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Kode</th>
+              <th>Nama Tindakan</th>
+              <th>Kategori</th>
+              <th class="text-end">Biaya Tarif</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in tindakan_list %}
+              <tr>
+                <td class="font-monospace">{{ t.kode_tindakan }}</td>
+                <td>{{ t.nama_tindakan }}</td>
+                <td>{{ t.kategori }}</td>
+                <td class="text-end fw-semibold text-success">{{ t.biaya | rupiah }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    <!-- Resep Obat Terhubung -->
+    {% if resep %}
+      <div class="border border-success-subtle rounded p-3 mb-4 bg-success-subtle">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h6 class="fw-bold text-success mb-0">
+            <i class="bi bi-capsule me-2"></i>Resep Obat Pasien (No. Resep: {{ resep.no_resep }})
+          </h6>
+          <span class="badge {% if resep.status_resep == 'Selesai' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+            Status: {{ resep.status_resep }}
+          </span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered bg-white small mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Nama Obat</th>
+                <th>Jumlah</th>
+                <th>Aturan Pakai / Signa</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for dr in detail_resep %}
+                <tr>
+                  <td><strong>{{ dr.nama_obat }}</strong></td>
+                  <td>{{ dr.jumlah }} {{ dr.satuan }}</td>
+                  <td><span class="badge bg-light text-primary border">{{ dr.aturan_pakai }}</span></td>
+                  <td class="text-end">{{ dr.subtotal | rupiah }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Saran & Catatan Dokter -->
+    {% if rm.catatan_dokter %}
+      <div class="border rounded p-3 mb-4">
+        <h6 class="fw-bold text-slate-800 mb-1">Instruksi & Edukasi Pasien:</h6>
+        <p class="text-secondary small mb-0">{{ rm.catatan_dokter }}</p>
+      </div>
+    {% endif %}
+
+    <!-- Tanda Tangan & Pengesahan -->
+    <div class="row pt-4 mt-4 border-top">
+      <div class="col-6">
+        <div class="small text-muted">Pasien / Keluarga,</div>
+        <div style="height: 60px;"></div>
+        <strong class="d-block small">({{ rm.nama_pasien }})</strong>
+      </div>
+      <div class="col-6 text-end">
+        <div class="small text-muted">{{ hosp.kota }}, {{ rm.tanggal_periksa | tanggal_indo }}</div>
+        <div class="small text-muted">Dokter Penanggung Jawab Pelayanan (DPJP),</div>
+        <div style="height: 60px;"></div>
+        <strong class="d-block text-primary small">({{ rm.nama_dokter }})</strong>
+        <small class="text-muted font-monospace">SIP: {{ rm.nip_sip }}</small>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

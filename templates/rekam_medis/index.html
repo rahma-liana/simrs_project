@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Rekam Medis Pasien{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Pencatatan Rekam Medis (EMR)</h2>
+    <p class="text-muted small mb-0">Arsip digital hasil anamnesis, tanda vital, diagnosis ICD-10, tindakan medis, dan terapi dokter.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('pendaftaran.index') }}" class="btn btn-outline-primary">
+      <i class="bi bi-person-lines-fill me-1"></i>Pilih Pasien dari Antrean
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('rekam_medis.index') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-3 p-0 pe-md-2">
+        <input type="date" class="form-control" name="tanggal" value="{{ selected_tanggal }}">
+      </div>
+      <div class="col-md-5 p-0 pe-md-2">
+        <input type="text" class="form-control" name="search" value="{{ search }}" 
+               placeholder="Cari Pasien, No. RM, No. Rekam Medis, Diagnosis...">
+      </div>
+      <div class="col-auto p-0">
+        <button type="submit" class="btn btn-outline-primary">Cari</button>
+        {% if search or selected_tanggal %}
+          <a href="{{ url_for('rekam_medis.index') }}" class="btn btn-light ms-1">Reset</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>No. Rekam Medis</th>
+            <th>Tgl Periksa</th>
+            <th>Pasien</th>
+            <th>Dokter & Poli</th>
+            <th>Diagnosis Utama</th>
+            <th>Tanda Vital</th>
+            <th>Resep Obat</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if rekam_medis_list %}
+            {% for rm in rekam_medis_list %}
+              <tr>
+                <td><strong class="text-primary font-monospace">{{ rm.no_rekam_medis }}</strong></td>
+                <td>{{ rm.tanggal_periksa | tanggal_indo }}</td>
+                <td>
+                  <a href="{{ url_for('pasien.detail', id=rm.pasien_id) }}" class="fw-semibold text-slate-800 text-decoration-none">
+                    {{ rm.nama_pasien }}
+                  </a>
+                  <span class="text-muted small d-block">No. RM: {{ rm.no_rm }}</span>
+                </td>
+                <td>
+                  <strong class="d-block text-slate-700 small">{{ rm.nama_dokter }}</strong>
+                  <small class="text-muted">{{ rm.nama_poli }}</small>
+                </td>
+                <td>
+                  <div class="fw-semibold text-slate-800">{{ rm.diagnosis }}</div>
+                  {% if rm.kode_icd10 %}
+                    <span class="badge bg-primary-subtle text-primary">{{ rm.kode_icd10 }}</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <small class="text-muted">
+                    TD: <strong>{{ rm.tekanan_darah or '-' }}</strong> &bull; S: <strong>{{ rm.suhu_tubuh or '-' }}&deg;C</strong>
+                  </small>
+                </td>
+                <td>
+                  {% if rm.resep_id %}
+                    <a href="{{ url_for('farmasi.resep_detail', id=rm.resep_id) }}" class="badge text-decoration-none {% if rm.status_resep == 'Selesai' %}bg-success-subtle text-success{% else %}bg-warning-subtle text-warning{% endif %}">
+                      <i class="bi bi-capsule me-1"></i>Resep ({{ rm.status_resep }})
+                    </a>
+                  {% else %}
+                    <a href="{{ url_for('farmasi.buat_resep', rekam_medis_id=rm.id) }}" class="badge bg-light text-primary border text-decoration-none">
+                      + Buat Resep
+                    </a>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <a href="{{ url_for('rekam_medis.detail', id=rm.id) }}" class="btn btn-sm btn-light" title="Buka Lembar Rekam Medis">
+                    <i class="bi bi-file-earmark-medical text-primary"></i> Detail
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center py-4 text-muted">Belum ada riwayat rekam medis yang tercatat.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

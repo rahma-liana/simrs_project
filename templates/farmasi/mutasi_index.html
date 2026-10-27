@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Riwayat Mutasi Stok Obat{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Riwayat Mutasi Stok Obat (Masuk & Keluar)</h2>
+    <p class="text-muted small mb-0">Audit pergerakan fisik obat, penerimaan distributor (stok masuk), dan pemakaian klinis (stok keluar).</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('farmasi.obat_index') }}" class="btn btn-outline-primary">
+      <i class="bi bi-capsule me-1"></i>Master Obat
+    </a>
+    <a href="{{ url_for('farmasi.mutasi_tambah') }}" class="btn btn-primary">
+      <i class="bi bi-plus-circle-fill me-1"></i>Catat Mutasi Obat Baru
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('farmasi.mutasi_index') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-3 p-0 pe-md-2">
+        <input type="date" class="form-control" name="tgl_mulai" value="{{ tgl_mulai }}" placeholder="Dari Tanggal">
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <input type="date" class="form-control" name="tgl_selesai" value="{{ tgl_selesai }}" placeholder="Sampai Tanggal">
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <select class="form-select" name="jenis">
+          <option value="">-- Semua Jenis Mutasi --</option>
+          <option value="Masuk" {% if jenis == 'Masuk' %}selected{% endif %}>Obat Masuk (Penerimaan)</option>
+          <option value="Keluar" {% if jenis == 'Keluar' %}selected{% endif %}>Obat Keluar (Pemakaian)</option>
+        </select>
+      </div>
+      <div class="col-auto p-0">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Kode</th>
+            <th>Nama Obat</th>
+            <th>Jenis Mutasi</th>
+            <th>Jumlah</th>
+            <th>Stok Sebelum</th>
+            <th>Stok Sesudah</th>
+            <th>No. Referensi</th>
+            <th>Keterangan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if mutasi_list %}
+            {% for m in mutasi_list %}
+              <tr>
+                <td>{{ m.tanggal | tanggal_indo }}</td>
+                <td><small class="text-muted font-monospace">{{ m.kode_obat }}</small></td>
+                <td><strong class="text-slate-800">{{ m.nama_obat }}</strong></td>
+                <td>
+                  {% if m.jenis_mutasi == 'Masuk' %}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                      <i class="bi bi-arrow-down-left me-1"></i>Masuk
+                    </span>
+                  {% else %}
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                      <i class="bi bi-arrow-up-right me-1"></i>Keluar
+                    </span>
+                  {% endif %}
+                </td>
+                <td>
+                  <strong class="{% if m.jenis_mutasi == 'Masuk' %}text-success{% else %}text-danger{% endif %}">
+                    {{ '+' if m.jenis_mutasi == 'Masuk' else '-' }}{{ m.jumlah }} {{ m.satuan }}
+                  </strong>
+                </td>
+                <td>{{ m.stok_sebelum }}</td>
+                <td><strong>{{ m.stok_sesudah }}</strong></td>
+                <td><small class="text-muted font-monospace">{{ m.no_referensi or '-' }}</small></td>
+                <td><small class="text-muted">{{ m.keterangan or '-' }}</small></td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="9" class="text-center py-4 text-muted">Belum ada catatan mutasi obat.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

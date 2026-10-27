@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Catat Mutasi Stok Obat{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('farmasi.mutasi_index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Riwayat Mutasi
+  </a>
+  <h2 class="h4 fw-bold text-slate-900 mb-1">Pencatatan Mutasi Stok Obat</h2>
+  <p class="text-muted small mb-0">Catat penerimaan stok obat baru dari distributor atau pengurangan stok karena pemakaian/kadaluwarsa.</p>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-4">
+    <form method="POST">
+      <div class="row g-3">
+        <!-- Pilih Obat -->
+        <div class="col-md-6">
+          <label for="obat_id" class="form-label">Pilih Obat <span class="text-danger">*</span></label>
+          <select class="form-select" id="obat_id" name="obat_id" required>
+            <option value="">-- Pilih Obat --</option>
+            {% for o in obat_list %}
+              <option value="{{ o.id }}">
+                {{ o.nama_obat }} ({{ o.kode_obat }}) - Sisa Stok: {{ o.stok_saat_ini }} {{ o.satuan }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Jenis Mutasi -->
+        <div class="col-md-6">
+          <label for="jenis_mutasi" class="form-label">Jenis Mutasi <span class="text-danger">*</span></label>
+          <select class="form-select" id="jenis_mutasi" name="jenis_mutasi" required>
+            <option value="Masuk">Masuk (Penerimaan dari Distributor / PBF)</option>
+            <option value="Keluar">Keluar (Pemakaian Non-Resep / Retur / Kadaluwarsa)</option>
+          </select>
+        </div>
+
+        <!-- Jumlah Mutasi -->
+        <div class="col-md-4">
+          <label for="jumlah" class="form-label">Jumlah Unit <span class="text-danger">*</span></label>
+          <input type="number" class="form-control" id="jumlah" name="jumlah" min="1" required placeholder="Contoh: 100">
+        </div>
+
+        <!-- Tanggal -->
+        <div class="col-md-4">
+          <label for="tanggal" class="form-label">Tanggal Transaksi <span class="text-danger">*</span></label>
+          <input type="date" class="form-control" id="tanggal" name="tanggal" required value="{{ today_str }}">
+        </div>
+
+        <!-- Nomor Referensi -->
+        <div class="col-md-4">
+          <label for="no_referensi" class="form-label">No. Faktur / Surat Jalan</label>
+          <input type="text" class="form-control font-monospace" id="no_referensi" name="no_referensi" placeholder="PO-202610-001">
+        </div>
+
+        <!-- Keterangan -->
+        <div class="col-12">
+          <label for="keterangan" class="form-label">Keterangan / Nama Supplier</label>
+          <textarea class="form-control" id="keterangan" name="keterangan" rows="2" 
+                    placeholder="Contoh: Pengiriman batch 12 dari PBF Kimia Farma Trading"></textarea>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+        <a href="{{ url_for('farmasi.mutasi_index') }}" class="btn btn-light px-4">Batal</a>
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="bi bi-check-circle-fill me-1"></i>Simpan Mutasi & Perbarui Stok
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

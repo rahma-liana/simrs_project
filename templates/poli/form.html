@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Tambah Poli Baru' if action == 'tambah' else 'Edit Poliklinik' }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('poli.index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar Poli
+  </a>
+  <h2 class="h4 fw-bold text-slate-900 mb-1">{{ 'Tambah Poliklinik Baru' if action == 'tambah' else 'Perbarui Data Poliklinik' }}</h2>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-4">
+    <form method="POST">
+      <div class="row g-3">
+        <!-- Kode Poli -->
+        <div class="col-md-6">
+          <label for="kode_poli" class="form-label">Kode Poli <span class="text-danger">*</span></label>
+          <input type="text" class="form-control text-uppercase" id="kode_poli" name="kode_poli" required
+                 value="{{ poli.kode_poli if poli else (form.kode_poli if form else '') }}" placeholder="Contoh: POL-SARAF">
+          <div class="form-text">Digunakan sebagai awalan penomoran antrean (misal: S-001).</div>
+        </div>
+
+        <!-- Nama Poli -->
+        <div class="col-md-6">
+          <label for="nama_poli" class="form-label">Nama Poliklinik <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="nama_poli" name="nama_poli" required
+                 value="{{ poli.nama_poli if poli else (form.nama_poli if form else '') }}" placeholder="Contoh: Poli Saraf & Neurologi">
+        </div>
+
+        <!-- Lokasi -->
+        <div class="col-md-6">
+          <label for="lokasi" class="form-label">Lokasi Gedung / Ruangan <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="lokasi" name="lokasi" required
+                 value="{{ poli.lokasi if poli else (form.lokasi if form else '') }}" placeholder="Contoh: Gedung B, Lantai 2">
+        </div>
+
+        <!-- Status Aktif -->
+        <div class="col-md-6">
+          <label for="status_aktif" class="form-label">Status Operasional</label>
+          <select class="form-select" id="status_aktif" name="status_aktif">
+            <option value="Aktif" {% if not poli or poli.status_aktif == 'Aktif' %}selected{% endif %}>Aktif Melayani</option>
+            <option value="Nonaktif" {% if poli and poli.status_aktif == 'Nonaktif' %}selected{% endif %}>Nonaktif Sementara</option>
+          </select>
+        </div>
+
+        <!-- Keterangan -->
+        <div class="col-12">
+          <label for="keterangan" class="form-label">Keterangan Layanan</label>
+          <textarea class="form-control" id="keterangan" name="keterangan" rows="2" 
+                    placeholder="Deskripsi jenis pemeriksaan dan keluhan yang ditangani...">{{ poli.keterangan if poli else (form.keterangan if form else '') }}</textarea>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+        <a href="{{ url_for('poli.index') }}" class="btn btn-light px-4">Batal</a>
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="bi bi-save me-1"></i>Simpan Poli
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

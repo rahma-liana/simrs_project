@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Katalog Tindakan Medis{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Katalog Tindakan & Prosedur Medis</h2>
+    <p class="text-muted small mb-0">Kelola master tindakan medis, tarif prosedur klinis, dan kategori tindakan rumah sakit.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('tindakan.tambah') }}" class="btn btn-primary">
+      <i class="bi bi-plus-circle-fill me-1"></i>Tambah Tindakan Baru
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>Kode</th>
+            <th>Nama Tindakan Medis</th>
+            <th>Kategori</th>
+            <th>Tarif Tindakan</th>
+            <th>Keterangan</th>
+            <th>Status</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if tindakan_list %}
+            {% for t in tindakan_list %}
+              <tr>
+                <td><span class="badge bg-primary text-white font-monospace">{{ t.kode_tindakan }}</span></td>
+                <td><strong class="text-slate-800">{{ t.nama_tindakan }}</strong></td>
+                <td><span class="badge bg-light text-dark border">{{ t.kategori }}</span></td>
+                <td><strong class="text-success">{{ t.tarif | rupiah }}</strong></td>
+                <td><small class="text-muted">{{ t.keterangan or '-' }}</small></td>
+                <td>
+                  {% if t.status_aktif == 'Aktif' %}
+                    <span class="badge bg-success-subtle text-success">Aktif</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Nonaktif</span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <a href="{{ url_for('tindakan.edit', id=t.id) }}" class="btn btn-light" title="Edit Tindakan">
+                      <i class="bi bi-pencil-fill text-warning"></i>
+                    </a>
+                    <button type="button" class="btn btn-light" title="Hapus Tindakan"
+                            onclick="konfirmasiHapus('form-hapus-tindakan-{{ t.id }}', '{{ t.nama_tindakan }}')">
+                      <i class="bi bi-trash-fill text-danger"></i>
+                    </button>
+                  </div>
+                  <form id="form-hapus-tindakan-{{ t.id }}" method="POST" action="{{ url_for('tindakan.hapus', id=t.id) }}" style="display:none;"></form>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center py-4 text-muted">Belum ada katalog tindakan medis.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

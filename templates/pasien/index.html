@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Manajemen Data Pasien{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Manajemen Data Pasien</h2>
+    <p class="text-muted small mb-0">Kelola informasi demografis, nomor rekam medis unik, dan rekam identitas pasien rumah sakit.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('pasien.tambah') }}" class="btn btn-primary">
+      <i class="bi bi-person-plus-fill me-1"></i>Tambah Pasien Baru
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <!-- Search & Filter Bar -->
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('pasien.index') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-5 col-lg-4 p-0">
+        <div class="input-group">
+          <span class="input-group-text bg-light text-muted border-end-0">
+            <i class="bi bi-search"></i>
+          </span>
+          <input type="text" class="form-control border-start-0" name="search" value="{{ search }}" 
+                 placeholder="Cari No. RM, Nama, NIK, atau Telepon...">
+        </div>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Cari</button>
+        {% if search %}
+          <a href="{{ url_for('pasien.index') }}" class="btn btn-light ms-1">Reset</a>
+        {% endif %}
+      </div>
+      <div class="col text-end p-0 d-none d-md-block text-muted small">
+        Total: <strong>{{ pasien_list | length }}</strong> Pasien Terdaftar
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>No. RM</th>
+            <th>Nama Lengkap</th>
+            <th>NIK</th>
+            <th>Jenis Kelamin</th>
+            <th>Tgl Lahir / Usia</th>
+            <th>No. Telepon</th>
+            <th>Gol. Darah</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if pasien_list %}
+            {% for p in pasien_list %}
+              <tr>
+                <td><strong class="text-primary">{{ p.no_rm }}</strong></td>
+                <td>
+                  <a href="{{ url_for('pasien.detail', id=p.id) }}" class="fw-semibold text-slate-800 text-decoration-none hover-primary">
+                    {{ p.nama_lengkap }}
+                  </a>
+                  {% if p.riwayat_alergi and p.riwayat_alergi != 'Tidak ada' %}
+                    <span class="badge bg-danger-subtle text-danger ms-1" title="Alergi: {{ p.riwayat_alergi }}">Alergi</span>
+                  {% endif %}
+                </td>
+                <td><small class="text-muted">{{ p.nik }}</small></td>
+                <td>
+                  {% if p.jenis_kelamin == 'L' %}
+                    <span class="badge bg-primary-subtle text-primary">Laki-laki</span>
+                  {% else %}
+                    <span class="badge bg-danger-subtle text-danger">Perempuan</span>
+                  {% endif %}
+                </td>
+                <td>{{ p.tanggal_lahir | tanggal_indo }}</td>
+                <td>{{ p.no_telepon }}</td>
+                <td><span class="badge bg-light text-dark border">{{ p.golongan_darah }}</span></td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <a href="{{ url_for('pasien.detail', id=p.id) }}" class="btn btn-light" title="Detail Pasien">
+                      <i class="bi bi-eye-fill text-info"></i>
+                    </a>
+                    <a href="{{ url_for('pasien.edit', id=p.id) }}" class="btn btn-light" title="Edit Pasien">
+                      <i class="bi bi-pencil-fill text-warning"></i>
+                    </a>
+                    <button type="button" class="btn btn-light" title="Hapus Pasien"
+                            onclick="konfirmasiHapus('form-hapus-{{ p.id }}', '{{ p.nama_lengkap }} ({{ p.no_rm }})')">
+                      <i class="bi bi-trash-fill text-danger"></i>
+                    </button>
+                  </div>
+                  <form id="form-hapus-{{ p.id }}" method="POST" action="{{ url_for('pasien.hapus', id=p.id) }}" style="display:none;"></form>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center py-4 text-muted">
+                <i class="bi bi-person-x fs-3 d-block mb-1"></i>
+                Tidak ada data pasien yang sesuai kriteria.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

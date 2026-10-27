@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Karcis Antrean - {{ p.no_antrean }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    body {
+      background-color: #f1f5f9;
+      font-family: monospace, sans-serif;
+    }
+    .ticket-card {
+      width: 320px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 24px;
+      border: 1px dashed #94a3b8;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+    .queue-number {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #0284c7;
+      letter-spacing: 2px;
+      margin: 10px 0;
+    }
+    @media print {
+      body { background: transparent; }
+      .ticket-card { box-shadow: none; border: none; margin: 0; width: 100%; padding: 0; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ticket-card">
+  <div class="no-print mb-3">
+    <button onclick="window.print()" class="btn btn-sm btn-primary w-100 mb-2">
+      <i class="bi bi-printer-fill me-1"></i>Cetak Karcis
+    </button>
+    <a href="{{ url_for('pendaftaran.index') }}" class="btn btn-sm btn-light w-100">
+      &larr; Kembali ke Daftar Antrean
+    </a>
+  </div>
+
+  <div class="border-bottom pb-2 mb-2">
+    <h5 class="fw-bold mb-0 text-slate-800">{{ hosp.nama_rs }}</h5>
+    <small class="text-muted d-block" style="font-size: 0.72rem;">{{ hosp.alamat }}</small>
+    <small class="text-muted" style="font-size: 0.72rem;">Telp: {{ hosp.no_telepon }}</small>
+  </div>
+
+  <div class="my-2 text-uppercase text-secondary small fw-bold">Nomor Antrean Pelayanan</div>
+  <div class="queue-number">{{ p.no_antrean }}</div>
+  
+  <div class="badge bg-primary text-white mb-3 px-3 py-1 fs-6">{{ p.nama_poli }}</div>
+  <div class="small text-muted mb-3"><i class="bi bi-geo-alt me-1"></i>{{ p.lokasi }}</div>
+
+  <table class="table table-sm text-start table-borderless small mb-3">
+    <tr>
+      <td class="text-muted">No. Reg:</td>
+      <td class="fw-bold font-monospace">{{ p.no_pendaftaran }}</td>
+    </tr>
+    <tr>
+      <td class="text-muted">Nama:</td>
+      <td class="fw-bold">{{ p.nama_pasien }}</td>
+    </tr>
+    <tr>
+      <td class="text-muted">No. RM:</td>
+      <td>{{ p.no_rm }}</td>
+    </tr>
+    <tr>
+      <td class="text-muted">Dokter:</td>
+      <td>{{ p.nama_dokter }}</td>
+    </tr>
+    <tr>
+      <td class="text-muted">Waktu:</td>
+      <td>{{ p.tanggal_kunjungan | tanggal_indo }} {{ p.waktu_daftar }}</td>
+    </tr>
+  </table>
+
+  <div class="border-top pt-2 text-muted" style="font-size: 0.7rem;">
+    <div>Harap menunggu panggilan di ruang tunggu poliklinik yang bersangkutan.</div>
+    <div class="mt-1 fw-bold text-success">Semoga Lekas Sembuh!</div>
+  </div>
+</div>
+
+</body>
+</html>

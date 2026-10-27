@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Administrator - SIMRS {{ hosp.nama_rs }}</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #ecfdf5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 20px 40px rgba(2, 132, 199, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      overflow: hidden;
+    }
+    .login-header {
+      padding: 2.25rem 2rem 1.5rem;
+      text-align: center;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .login-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #0284c7 0%, #10b981 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 2rem;
+      box-shadow: 0 10px 20px rgba(2, 132, 199, 0.25);
+      margin-bottom: 1rem;
+    }
+    .login-body {
+      padding: 2rem;
+    }
+    .demo-box {
+      background-color: #f0f9ff;
+      border: 1px dashed #7dd3fc;
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-size: 0.8rem;
+      color: #0369a1;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="login-header">
+    <div class="login-icon">
+      <i class="bi bi-hospital"></i>
+    </div>
+    <h2 class="h5 fw-bold text-slate-900 mb-1">SIMRS Terintegrasi</h2>
+    <p class="text-muted small mb-0">{{ hosp.nama_rs }}</p>
+  </div>
+
+  <div class="login-body">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show mb-3 p-2 small" role="alert">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-exclamation-circle-fill"></i>
+              <div>{{ message }}</div>
+            </div>
+            <button type="button" class="btn-close p-2" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('auth.login', next=request.args.get('next')) }}">
+      <div class="mb-3">
+        <label for="username_or_email" class="form-label">Username atau Email Admin</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light text-muted border-end-0">
+            <i class="bi bi-person-fill"></i>
+          </span>
+          <input type="text" class="form-control border-start-0" id="username_or_email" name="username_or_email" 
+                 placeholder="admin atau admin@rsmedika.co.id" required autofocus value="admin">
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light text-muted border-end-0">
+            <i class="bi bi-lock-fill"></i>
+          </span>
+          <input type="password" class="form-control border-start-0" id="password" name="password" 
+                 placeholder="Masukkan password akun" required value="admin123">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+        <i class="bi bi-box-arrow-in-right me-2"></i>Masuk ke Sistem
+      </button>
+
+      <!-- Informasi Akses Simulasi -->
+      <div class="demo-box">
+        <div class="fw-bold mb-1"><i class="bi bi-shield-lock-fill me-1"></i>Akun Admin Siap Pakai:</div>
+        <div>Username: <strong>admin</strong></div>
+        <div>Password: <strong>admin123</strong></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="text-center py-3 bg-light text-muted small border-top">
+    <span>&copy; 2026 {{ hosp.nama_rs }}</span>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

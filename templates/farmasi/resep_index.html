@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Resep Obat Dokter{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Daftar Resep Obat Rawat Jalan</h2>
+    <p class="text-muted small mb-0">Kelola antrean penyiapan resep obat, validasi stok, penyerahan obat, dan integrasi penagihan.</p>
+  </div>
+  <div>
+    <a href="{{ url_for('rekam_medis.index') }}" class="btn btn-outline-primary">
+      <i class="bi bi-clipboard2-pulse me-1"></i>Pilih dari Rekam Medis
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('farmasi.resep_index') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-3 p-0 pe-md-2">
+        <select class="form-select" name="status">
+          <option value="">-- Semua Status Resep --</option>
+          <option value="Menunggu" {% if selected_status == 'Menunggu' %}selected{% endif %}>Menunggu Penyiapan</option>
+          <option value="Diproses" {% if selected_status == 'Diproses' %}selected{% endif %}>Sedang Diproses</option>
+          <option value="Selesai" {% if selected_status == 'Selesai' %}selected{% endif %}>Selesai Diserahkan</option>
+        </select>
+      </div>
+      <div class="col-auto p-0">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>No. Resep</th>
+            <th>Tgl Resep</th>
+            <th>Pasien</th>
+            <th>Dokter Pembuat</th>
+            <th>Diagnosis Medis</th>
+            <th>Total Harga Obat</th>
+            <th>Status Penyerahan</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if resep_list %}
+            {% for r in resep_list %}
+              <tr>
+                <td><strong class="text-primary font-monospace">{{ r.no_resep }}</strong></td>
+                <td>{{ r.tanggal_resep | tanggal_indo }}</td>
+                <td>
+                  <strong class="text-slate-800 d-block">{{ r.nama_pasien }}</strong>
+                  <small class="text-muted">No. RM: {{ r.no_rm }}</small>
+                </td>
+                <td><small>{{ r.nama_dokter }}</small></td>
+                <td><small class="text-secondary">{{ r.diagnosis }}</small></td>
+                <td><strong class="text-success">{{ r.total_harga_obat | rupiah }}</strong></td>
+                <td>
+                  {% if r.status_resep == 'Selesai' %}
+                    <span class="badge-status badge-selesai">
+                      <i class="bi bi-check-circle-fill"></i>Diserahkan
+                    </span>
+                  {% elif r.status_resep == 'Menunggu' %}
+                    <span class="badge-status badge-menunggu">
+                      <i class="bi bi-hourglass-split"></i>Menunggu
+                    </span>
+                  {% else %}
+                    <span class="badge-status badge-dipanggil">{{ r.status_resep }}</span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <a href="{{ url_for('farmasi.resep_detail', id=r.id) }}" class="btn btn-sm btn-light text-primary">
+                    <i class="bi bi-eye-fill me-1"></i>Rincian Resep
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center py-4 text-muted">Belum ada resep obat terdaftar.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Kasir & Pembayaran Tagihan{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Kasir & Pembayaran Tagihan Pasien</h2>
+    <p class="text-muted small mb-0">Kelola rincian tagihan terintegrasi (registrasi, konsultasi, tindakan klinis, dan farmasi), pembayaran, serta cetak bukti kuitansi resmi.</p>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('kasir.index') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-3 p-0 pe-md-2">
+        <input type="date" class="form-control" name="tanggal" value="{{ selected_tanggal }}">
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <select class="form-select" name="status">
+          <option value="">-- Semua Status Pembayaran --</option>
+          <option value="Belum Dibayar" {% if selected_status == 'Belum Dibayar' %}selected{% endif %}>Belum Dibayar</option>
+          <option value="Sebagian" {% if selected_status == 'Sebagian' %}selected{% endif %}>Sebagian (Belum Lunas)</option>
+          <option value="Lunas" {% if selected_status == 'Lunas' %}selected{% endif %}>Lunas</option>
+        </select>
+      </div>
+      <div class="col-md-4 p-0 pe-md-2">
+        <input type="text" class="form-control" name="search" value="{{ search }}" placeholder="Cari No. Tagihan, Nama Pasien, No. RM...">
+      </div>
+      <div class="col-auto p-0">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+        {% if selected_tanggal or selected_status or search %}
+          <a href="{{ url_for('kasir.index') }}" class="btn btn-light ms-1">Reset</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>No. Tagihan</th>
+            <th>Tanggal</th>
+            <th>Pasien & No. RM</th>
+            <th>Poli & Dokter</th>
+            <th>Rincian Biaya</th>
+            <th>Total Tagihan</th>
+            <th>Status Pembayaran</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if tagihan_list %}
+            {% for t in tagihan_list %}
+              <tr>
+                <td><strong class="text-primary font-monospace">{{ t.no_tagihan }}</strong></td>
+                <td>{{ t.tanggal_tagihan | tanggal_indo }}</td>
+                <td>
+                  <strong class="text-slate-800 d-block">{{ t.nama_pasien }}</strong>
+                  <small class="text-muted">No. RM: {{ t.no_rm }}</small>
+                </td>
+                <td>
+                  <small class="d-block text-primary fw-semibold">{{ t.nama_poli }}</small>
+                  <small class="text-muted">{{ t.nama_dokter }}</small>
+                </td>
+                <td>
+                  <div class="small text-muted" style="font-size: 0.75rem;">
+                    Reg+Konsul: {{ (t.biaya_pendaftaran + t.biaya_konsultasi) | rupiah }}<br>
+                    Tindakan: {{ t.biaya_tindakan | rupiah }}<br>
+                    Obat: {{ t.biaya_obat | rupiah }}
+                  </div>
+                </td>
+                <td><strong class="fs-6 text-slate-900">{{ t.total_tagihan | rupiah }}</strong></td>
+                <td>
+                  {% if t.status_pembayaran == 'Lunas' %}
+                    <span class="badge-status badge-lunas">
+                      <i class="bi bi-check-circle-fill"></i>Lunas
+                    </span>
+                  {% elif t.status_pembayaran == 'Sebagian' %}
+                    <span class="badge-status badge-sebagian">
+                      <i class="bi bi-pie-chart-fill"></i>Sebagian
+                    </span>
+                  {% else %}
+                    <span class="badge-status badge-belum-bayar">
+                      <i class="bi bi-exclamation-circle-fill"></i>Belum Dibayar
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <a href="{{ url_for('kasir.bayar', id=t.id) }}" class="btn btn-primary" title="Proses Pembayaran">
+                      <i class="bi bi-credit-card me-1"></i>Bayar
+                    </a>
+                    {% if t.status_pembayaran == 'Lunas' or t.status_pembayaran == 'Sebagian' %}
+                      <a href="{{ url_for('kasir.cetak_struk', tagihan_id=t.id) }}" target="_blank" class="btn btn-outline-secondary" title="Cetak Kuitansi Resmi">
+                        <i class="bi bi-printer"></i>
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center py-4 text-muted">Belum ada data tagihan yang sesuai.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

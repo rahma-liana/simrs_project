@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Pendaftaran Kunjungan Pasien Baru{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('pendaftaran.index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Antrean
+  </a>
+  <h2 class="h4 fw-bold text-slate-900 mb-1">Form Pendaftaran Kunjungan Rawat Jalan</h2>
+  <p class="text-muted small mb-0">Pilih pasien, poliklinik tujuan, dokter pemeriksa, dan buat nomor antrean harian otomatis.</p>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-4">
+    <form method="POST">
+      <div class="row g-3">
+        <!-- Pilih Pasien -->
+        <div class="col-md-12">
+          <label for="pasien_id" class="form-label d-flex justify-content-between align-items-center">
+            <span>Pilih Pasien Terdaftar <span class="text-danger">*</span></span>
+            <a href="{{ url_for('pasien.tambah') }}" class="small text-decoration-none">
+              <i class="bi bi-plus-circle me-1"></i>Pasien Belum Terdaftar? Tambah Disini
+            </a>
+          </label>
+          <select class="form-select form-select-lg" id="pasien_id" name="pasien_id" required>
+            <option value="">-- Cari & Pilih Pasien (Nama atau No. RM) --</option>
+            {% for ps in pasien_list %}
+              <option value="{{ ps.id }}" {% if preselected_pasien_id|string == ps.id|string %}selected{% endif %}>
+                {{ ps.nama_lengkap }} &bull; No. RM: {{ ps.no_rm }} &bull; Telp: {{ ps.no_telepon }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Poliklinik -->
+        <div class="col-md-6">
+          <label for="select-poli" class="form-label">Tujuan Poliklinik <span class="text-danger">*</span></label>
+          <select class="form-select" id="select-poli" name="poli_id" required>
+            <option value="">-- Pilih Poliklinik --</option>
+            {% for p in poli_list %}
+              <option value="{{ p.id }}">{{ p.nama_poli }} ({{ p.kode_poli }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Dokter (Loaded dynamically via JS) -->
+        <div class="col-md-6">
+          <label for="select-dokter" class="form-label">Dokter Pemeriksa <span class="text-danger">*</span></label>
+          <select class="form-select" id="select-dokter" name="dokter_id" required disabled>
+            <option value="">-- Pilih Poliklinik Terlebih Dahulu --</option>
+          </select>
+          <div class="form-text">Daftar dokter otomatis menyesuaikan poliklinik yang Anda pilih.</div>
+        </div>
+
+        <!-- Tanggal Kunjungan -->
+        <div class="col-md-6">
+          <label for="tanggal_kunjungan" class="form-label">Tanggal Kunjungan <span class="text-danger">*</span></label>
+          <input type="date" class="form-control" id="tanggal_kunjungan" name="tanggal_kunjungan" required
+                 value="{{ today_str }}">
+        </div>
+
+        <!-- Keluhan Awal -->
+        <div class="col-md-6">
+          <label for="keluhan_awal" class="form-label">Keluhan Singkat Pasien</label>
+          <input type="text" class="form-control" id="keluhan_awal" name="keluhan_awal" 
+                 placeholder="Contoh: Demam 2 hari, batuk, pusing">
+        </div>
+
+        <!-- Catatan Khusus -->
+        <div class="col-12">
+          <label for="catatan" class="form-label">Catatan Tambahan Petugas</label>
+          <textarea class="form-control" id="catatan" name="catatan" rows="2" 
+                    placeholder="Catatan rujukan, instruksi khusus, atau catatan registrasi"></textarea>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+        <a href="{{ url_for('pendaftaran.index') }}" class="btn btn-light px-4">Batal</a>
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="bi bi-ticket-perforated me-1"></i>Daftarkan & Buat Tiket Antrean
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

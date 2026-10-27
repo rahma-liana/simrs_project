@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Tambah Tindakan Medis' if action == 'tambah' else 'Edit Tindakan Medis' }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('tindakan.index') }}" class="btn btn-sm btn-light mb-2">
+    <i class="bi bi-arrow-left me-1"></i>Kembali ke Katalog Tindakan
+  </a>
+  <h2 class="h4 fw-bold text-slate-900 mb-1">{{ 'Tambah Tindakan Medis Baru' if action == 'tambah' else 'Perbarui Tindakan Medis' }}</h2>
+</div>
+
+<div class="card-custom">
+  <div class="card-body p-4">
+    <form method="POST">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="kode_tindakan" class="form-label">Kode Tindakan <span class="text-danger">*</span></label>
+          <input type="text" class="form-control text-uppercase" id="kode_tindakan" name="kode_tindakan" required
+                 value="{{ tindakan.kode_tindakan if tindakan else (form.kode_tindakan if form else '') }}" placeholder="Contoh: TND-010">
+        </div>
+
+        <div class="col-md-8">
+          <label for="nama_tindakan" class="form-label">Nama Tindakan / Prosedur <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="nama_tindakan" name="nama_tindakan" required
+                 value="{{ tindakan.nama_tindakan if tindakan else (form.nama_tindakan if form else '') }}" placeholder="Contoh: Terapi Inhalasi Nebulizer">
+        </div>
+
+        <div class="col-md-4">
+          <label for="kategori" class="form-label">Kategori Tindakan</label>
+          <input type="text" class="form-control" id="kategori" name="kategori"
+                 value="{{ tindakan.kategori if tindakan else (form.kategori if form else 'Umum') }}" placeholder="Contoh: Bedah Minor / Gigi / Umum">
+        </div>
+
+        <div class="col-md-4">
+          <label for="tarif" class="form-label">Tarif Tindakan (Rp) <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text">Rp</span>
+            <input type="text" class="form-control input-rupiah" id="tarif" name="tarif" required
+                   value="{{ (tindakan.tarif | int) if tindakan else '50000' }}">
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label for="status_aktif" class="form-label">Status Tindakan</label>
+          <select class="form-select" id="status_aktif" name="status_aktif">
+            <option value="Aktif" {% if not tindakan or tindakan.status_aktif == 'Aktif' %}selected{% endif %}>Aktif</option>
+            <option value="Nonaktif" {% if tindakan and tindakan.status_aktif == 'Nonaktif' %}selected{% endif %}>Nonaktif</option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <label for="keterangan" class="form-label">Keterangan / SOP Singkat</label>
+          <textarea class="form-control" id="keterangan" name="keterangan" rows="2" 
+                    placeholder="Deskripsi peralatan atau prosedur tindakan medis">{{ tindakan.keterangan if tindakan else (form.keterangan if form else '') }}</textarea>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+        <a href="{{ url_for('tindakan.index') }}" class="btn btn-light px-4">Batal</a>
+        <button type="submit" class="btn btn-primary px-4">
+          <i class="bi bi-save me-1"></i>Simpan Tindakan
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

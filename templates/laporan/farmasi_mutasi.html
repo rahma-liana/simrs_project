@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Laporan Mutasi Obat (Masuk & Keluar){% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <a href="{{ url_for('laporan.index') }}" class="btn btn-sm btn-light mb-2">
+      <i class="bi bi-arrow-left me-1"></i>Kembali ke Pusat Laporan
+    </a>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Laporan Mutasi Obat Masuk & Keluar</h2>
+    <p class="text-muted small mb-0">Periode: {{ tgl_mulai | tanggal_indo }} s/d {{ tgl_selesai | tanggal_indo }}</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('laporan.farmasi', tipe='mutasi', export='print', tgl_mulai=tgl_mulai, tgl_selesai=tgl_selesai, jenis=jenis) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-printer-fill me-1"></i>Cetak Laporan
+    </a>
+    <a href="{{ url_for('laporan.farmasi', tipe='mutasi', export='excel', tgl_mulai=tgl_mulai, tgl_selesai=tgl_selesai, jenis=jenis) }}" class="btn btn-success btn-sm">
+      <i class="bi bi-file-earmark-excel-fill me-1"></i>Ekspor ke Excel
+    </a>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('laporan.farmasi') }}" class="row g-2 w-100 align-items-center m-0">
+      <input type="hidden" name="tipe" value="mutasi">
+      <div class="col-md-3 p-0 pe-md-2">
+        <label class="small text-muted mb-1">Dari Tanggal:</label>
+        <input type="date" class="form-control" name="tgl_mulai" value="{{ tgl_mulai }}">
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <label class="small text-muted mb-1">Sampai Tanggal:</label>
+        <input type="date" class="form-control" name="tgl_selesai" value="{{ tgl_selesai }}">
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <label class="small text-muted mb-1">Jenis Mutasi:</label>
+        <select class="form-select" name="jenis">
+          <option value="">-- Semua Jenis Mutasi --</option>
+          <option value="Masuk" {% if jenis == 'Masuk' %}selected{% endif %}>Masuk (Penerimaan)</option>
+          <option value="Keluar" {% if jenis == 'Keluar' %}selected{% endif %}>Keluar (Pemakaian)</option>
+        </select>
+      </div>
+      <div class="col-auto p-0 align-self-end">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Kode</th>
+            <th>Nama Obat</th>
+            <th>Kategori</th>
+            <th>Jenis Mutasi</th>
+            <th>Jumlah</th>
+            <th>Stok Sebelum</th>
+            <th>Stok Sesudah</th>
+            <th>No. Referensi</th>
+            <th>Keterangan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if data %}
+            {% for r in data %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ r.tanggal | tanggal_indo }}</td>
+                <td><small class="font-monospace text-muted">{{ r.kode_obat }}</small></td>
+                <td><strong>{{ r.nama_obat }}</strong></td>
+                <td><span class="badge bg-light text-dark border">{{ r.kategori }}</span></td>
+                <td>
+                  {% if r.jenis_mutasi == 'Masuk' %}
+                    <span class="badge bg-success">Masuk</span>
+                  {% else %}
+                    <span class="badge bg-danger">Keluar</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <strong class="{% if r.jenis_mutasi == 'Masuk' %}text-success{% else %}text-danger{% endif %}">
+                    {{ '+' if r.jenis_mutasi == 'Masuk' else '-' }}{{ r.jumlah }} {{ r.satuan }}
+                  </strong>
+                </td>
+                <td>{{ r.stok_sebelum }}</td>
+                <td><strong>{{ r.stok_sesudah }}</strong></td>
+                <td><small class="font-monospace text-muted">{{ r.no_referensi or '-' }}</small></td>
+                <td><small class="text-muted">{{ r.keterangan or '-' }}</small></td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr><td colspan="11" class="text-center py-4 text-muted">Tidak ada catatan mutasi obat pada periode ini.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

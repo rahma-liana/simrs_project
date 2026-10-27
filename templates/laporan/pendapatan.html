@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Laporan Pendapatan & Keuangan Kasir{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <a href="{{ url_for('laporan.index') }}" class="btn btn-sm btn-light mb-2">
+      <i class="bi bi-arrow-left me-1"></i>Kembali ke Pusat Laporan
+    </a>
+    <h2 class="h4 fw-bold text-slate-900 mb-1">Laporan Transaksi & Pendapatan Kasir</h2>
+    <p class="text-muted small mb-0">Periode: {{ tgl_mulai | tanggal_indo }} s/d {{ tgl_selesai | tanggal_indo }}</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('laporan.pendapatan', export='print', tgl_mulai=tgl_mulai, tgl_selesai=tgl_selesai, metode=selected_metode) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-printer-fill me-1"></i>Cetak Laporan
+    </a>
+    <a href="{{ url_for('laporan.pendapatan', export='excel', tgl_mulai=tgl_mulai, tgl_selesai=tgl_selesai, metode=selected_metode) }}" class="btn btn-success btn-sm">
+      <i class="bi bi-file-earmark-excel-fill me-1"></i>Ekspor ke Excel
+    </a>
+  </div>
+</div>
+
+<!-- Card Total Pendapatan Periode Ini -->
+<div class="card-custom mb-4 bg-primary text-white p-4">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <span class="text-white-50 small text-uppercase fw-semibold d-block">Total Akumulasi Pendapatan Periode Terpilih:</span>
+      <h2 class="fw-bold mb-0 text-white">{{ total_pendapatan | rupiah }}</h2>
+      <div class="small text-white-50 mt-1">{{ data | length }} transaksi pembayaran berhasil diverifikasi</div>
+    </div>
+    <div style="font-size: 3rem; opacity: 0.3;">
+      <i class="bi bi-wallet2"></i>
+    </div>
+  </div>
+</div>
+
+<div class="card-custom">
+  <div class="card-header bg-white">
+    <form method="GET" action="{{ url_for('laporan.pendapatan') }}" class="row g-2 w-100 align-items-center m-0">
+      <div class="col-md-3 p-0 pe-md-2">
+        <label class="small text-muted mb-1">Dari Tanggal:</label>
+        <input type="date" class="form-control" name="tgl_mulai" value="{{ tgl_mulai }}">
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <label class="small text-muted mb-1">Sampai Tanggal:</label>
+        <input type="date" class="form-control" name="tgl_selesai" value="{{ tgl_selesai }}">
+      </div>
+      <div class="col-md-3 p-0 pe-md-2">
+        <label class="small text-muted mb-1">Metode Pembayaran:</label>
+        <select class="form-select" name="metode">
+          <option value="">-- Semua Metode Pembayaran --</option>
+          {% for m in ['Tunai', 'Transfer Bank', 'QRIS', 'Kartu Debit/Kredit'] %}
+            <option value="{{ m }}" {% if selected_metode == m %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto p-0 align-self-end">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-custom mb-0">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Waktu Bayar</th>
+            <th>No. Kuitansi</th>
+            <th>No. Tagihan</th>
+            <th>Pasien</th>
+            <th>Poliklinik</th>
+            <th>Metode</th>
+            <th class="text-end">Jumlah Bayar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if data %}
+            {% for r in data %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ r.tanggal_bayar | datetime_indo }}</td>
+                <td><strong class="text-primary font-monospace">{{ r.no_pembayaran }}</strong></td>
+                <td><small class="font-monospace text-muted">{{ r.no_tagihan }}</small></td>
+                <td>
+                  <strong>{{ r.nama_pasien }}</strong>
+                  <small class="text-muted d-block">No. RM: {{ r.no_rm }}</small>
+                </td>
+                <td>{{ r.nama_poli }}</td>
+                <td><span class="badge bg-light text-dark border">{{ r.metode_pembayaran }}</span></td>
+                <td class="text-end"><strong class="text-success fs-6">{{ r.jumlah_bayar | rupiah }}</strong></td>
+              </tr>
+            {% endfor %}
+            <tr class="table-light">
+              <td colspan="7" class="text-end fw-bold">TOTAL PENERIMAAN:</td>
+              <td class="text-end fw-bold fs-6 text-primary">{{ total_pendapatan | rupiah }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="8" class="text-center py-4 text-muted">Tidak ada transaksi pembayaran pada periode ini.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
